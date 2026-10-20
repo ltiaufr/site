@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Equino · Consulta térmica</title>
+<style>
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:#0c141d;color:#e8eff6;font:14px system-ui,Segoe UI,Arial;display:flex;flex-direction:column}
+header{min-height:52px;background:#172432;border-bottom:1px solid #2b3d50;display:flex;align-items:center;gap:10px;padding:7px 16px;flex-wrap:wrap}h1{font-size:15px;margin:0}button,select{background:#233447;color:#e8eff6;border:1px solid #43576b;border-radius:6px;padding:7px 10px;font:inherit;cursor:pointer}button:disabled{opacity:.4;cursor:default}.actions{margin-left:auto;display:flex;gap:6px;align-items:center}#count{font-size:12px;color:#9eb4c8}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;padding:10px;flex:1;min-height:0}.pane{background:#162330;border:1px solid #304459;border-radius:8px;display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}.view{background:#0a1119;position:relative;flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center}.view img{display:block;width:100%;height:100%;object-fit:contain}.view canvas{display:block}.info{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;min-height:36px;border-top:1px solid #2c4053;font-size:12px;color:#aebfd1;white-space:nowrap;overflow:hidden}.info span{overflow:hidden;text-overflow:ellipsis}#photoName{font-family:Consolas,monospace;color:#d7e3ee}#photoSelect{max-width:210px;min-width:110px;font-size:12px}#status{padding:7px 16px;background:#111e2b;border-top:1px solid #263a4c;color:#a8bed0;font-size:12px;min-height:30px}#match{color:#9acfe4}.pill{color:#b8e8d6;font-size:11px}@media(max-width:850px){main{grid-template-columns:1fr;grid-template-rows:minmax(240px,1fr) minmax(240px,1fr)}.actions{margin-left:0}header{gap:6px;padding:8px}#count{display:none}#photoSelect{max-width:125px}}
+</style></head><body>
+<header><h1>Equino · Consulta térmica</h1><span id="count"></span><div class="actions"><button id="prev">◀ Anterior</button><select id="photoSelect" aria-label="Selecionar fotografia"></select><button id="next">Próxima ▶</button><button id="home">Visão inicial</button></div></header>
+<main><section class="pane"><div class="view"><img id="photo" alt="Fotografia térmica"></div><div class="info"><span id="photoName">—</span><span id="tag" class="pill"></span></div></section><section class="pane"><div class="view" id="three"></div><div class="info"><span id="match">Modelo 3D</span><span id="pose"></span></div></section></main><div id="status">Inicializando consulta…</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {ColladaLoader} from 'three/addons/loaders/ColladaLoader.js';
+const $=id=>document.getElementById(id),status=t=>$('status').textContent=t;
+let files=[],records=[],idx=0,scale=1,object=null,auto=false,lastQuery=0,byImage=new Map();
+const scene=new THREE.Scene();scene.background=new THREE.Color('#0a1119');
+const camera=new THREE.PerspectiveCamera(45,1,.01,10000);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));$('three').appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x735a4b,2.5));const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(4,8,6);scene.add(light);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.12;
+function resize(){const el=$('three'),w=Math.max(el.clientWidth,1),h=Math.max(el.clientHeight,1);renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe($('three'));
+function pose(){const v=camera.position.clone().sub(controls.target),s=new THREE.Spherical().setFromVector3(v);return {azimuth:THREE.MathUtils.radToDeg(s.theta),elevation:90-THREE.MathUtils.radToDeg(s.phi),distance:v.length()/scale,target:controls.target.toArray().map(n=>n/scale)}}
+function setPose(p){if(!p)return;const s=new THREE.Spherical(Math.max(.01,Number(p.distance)*scale),THREE.MathUtils.degToRad(90-Number(p.elevation)),THREE.MathUtils.degToRad(Number(p.azimuth)));controls.target.fromArray((p.target||[0,0,0]).map(n=>Number(n)*scale));camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(s));controls.update()}
+function initial(){controls.target.set(0,0,0);camera.position.set(scale*.9,scale*.45,scale*1.3);controls.update()}
+function setIndex(i,restore=true){if(!files.length)return;idx=(i+files.length)%files.length;const f=files[idx];$('photo').src=f;$('photoName').textContent=`${idx+1} / ${files.length} · ${f.split('/').pop()}`;$('photoSelect').value=String(idx);const r=byImage.get(f);$('tag').textContent=r?'● Associada':'○ Sem associação';if(restore&&r&&object){auto=true;setPose(r);auto=false;$('match').textContent='Câmera da fotografia'}else if(restore&&!r)status('Esta fotografia não possui câmera associada.')}
+function angular(a,b){const ar=THREE.MathUtils.degToRad(a.azimuth),br=THREE.MathUtils.degToRad(b.azimuth),ae=THREE.MathUtils.degToRad(a.elevation),be=THREE.MathUtils.degToRad(b.elevation);return THREE.MathUtils.radToDeg(Math.acos(THREE.MathUtils.clamp(Math.sin(ae)*Math.sin(be)+Math.cos(ae)*Math.cos(be)*Math.cos(ar-br),-1,1)))}
+function bestMatch(p){let best=null,bestScore=Infinity;for(const r of records){if(!byImage.has(r.image))continue;const a=angular(p,r),d=Math.abs(Math.log(Math.max(.01,p.distance)/Math.max(.01,r.distance)))*20,t=Math.hypot(...p.target.map((v,i)=>v-(r.target||[0,0,0])[i]))*60;const score=a+d+t;if(score<bestScore){bestScore=score;best=r}}return {best,score:bestScore}}
+function onMove(){if(auto||!object)return;const now=performance.now();if(now-lastQuery<180)return;lastQuery=now;const {best,score}=bestMatch(pose());if(best){const j=files.indexOf(best.image);if(j>=0&&j!==idx)setIndex(j,false);$('match').textContent=`Vista mais próxima · índice ${score.toFixed(1)}`}else $('match').textContent='Sem associação disponível'}
+controls.addEventListener('change',onMove);
+function render(){requestAnimationFrame(render);controls.update();renderer.render(scene,camera);const p=pose();$('pose').textContent=`Az ${p.azimuth.toFixed(0)}° · El ${p.elevation.toFixed(0)}° · Zoom ${p.distance.toFixed(2)}`}render();
+$('prev').onclick=()=>setIndex(idx-1);$('next').onclick=()=>setIndex(idx+1);$('photoSelect').onchange=e=>setIndex(Number(e.target.value));$('home').onclick=()=>{auto=true;initial();auto=false;onMove()};
+function localImagePath(image){const name=String(image).split('/').pop();if(!name||name==='.'||name==='..')throw Error('Nome de imagem inválido');return './images/'+encodeURIComponent(name)}
+try{
+const response=await fetch('./associacoes.json',{cache:'no-store'});if(!response.ok)throw Error('associacoes.json indisponível (HTTP '+response.status+')');
+const data=await response.json();if(!Array.isArray(data.records))throw Error('associacoes.json precisa conter records');
+records=data.records.filter(r=>r&&typeof r.image==='string'&&Number.isFinite(Number(r.azimuth))&&Number.isFinite(Number(r.elevation))&&Number(r.distance)>0&&Array.isArray(r.target)&&r.target.length===3).map(r=>({...r,image:localImagePath(r.image)}));
+files=[...new Set(records.map(r=>r.image))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));byImage=new Map(records.map(r=>[r.image,r]));
+if(!files.length)throw Error('Nenhuma associação válida encontrada');
+files.forEach((f,i)=>{const o=document.createElement('option');o.value=i;o.textContent='✓ '+decodeURIComponent(f.split('/').pop());$('photoSelect').appendChild(o)});
+$('count').textContent=`${files.length} associadas`;setIndex(0,false);status('Carregando modelo DAE…');
+new ColladaLoader().load('./modelo/model_colorido.dae',doc=>{object=doc.scene;object.traverse(node=>{if(node.isMesh){node.material=new THREE.MeshStandardMaterial({color:0x8a3c27,roughness:.9,side:THREE.DoubleSide});if(node.geometry&&!node.geometry.attributes.normal)node.geometry.computeVertexNormals()}});scene.add(object);const box=new THREE.Box3().setFromObject(object),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());object.position.sub(center);scale=Math.max(size.length(),.01);camera.near=scale*.001;camera.far=scale*100;camera.updateProjectionMatrix();auto=true;initial();setIndex(idx,true);auto=false;status('Consulta pronta · Selecione uma fotografia ou movimente o modelo 3D.')},undefined,e=>status('Erro ao carregar DAE: '+e.message))
+}catch(e){status('Dados de publicação pendentes: '+e.message)}
+</script></body></html>
