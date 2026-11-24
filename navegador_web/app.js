@@ -59,13 +59,53 @@ let returnTimer=0; const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f
 function results(){const terms=normalize($('search').value).trim().split(/\s+/);const list=$('results');list.replaceChildren();for(const [i,d] of (map?.dest||[]).entries()){if(!terms.every(t=>normalize(d.nome).includes(t)))continue;const b=document.createElement('button');b.textContent=d.nome;b.onclick=()=>{ $('dest').value=i; $('go').click(); };list.append(b);}if(!list.children.length)list.textContent=map?'Nenhum destino encontrado.':'Carregando mapa…';}
 function consult(message=''){clearTimeout(returnTimer);route=[];$('navigation').hidden=true;$('consult').hidden=false;$('search').value='';$('feedback').textContent=message;results();}
 $('search').addEventListener('input',results);for(const row of ['QWERTYUIOP','ASDFGHJKL','ZXCVBNM','1234567890']){const line=document.createElement('div');line.className='keys';for(const c of row){const b=document.createElement('button');b.textContent=c;b.onclick=()=>{$('search').value+=c;results()};line.append(b)}$('keyboard').append(line)}for(const [id,action] of [['space',s=>s+' '],['backspace',s=>s.slice(0,-1)],['clear',()=> '']])$(id).onclick=()=>{$('search').value=action($('search').value);results()};
-function load(data){if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const rawStart=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),rawDest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));const all=[rawStart,...walls,...objects,...rawDest];if(!all.every(valid))throw Error('Coordenadas x e y devem ser números finitos.');if(!walls.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)))throw Error('Coordenadas das paredes devem ser inteiras em x e y.');/* O editor salva posições contínuas; A* trabalha com células de 1 metro. */const start=cell(rawStart),dest=rawDest.map(p=>({...p,...cell(p)}));let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest};blocked=new Set([...walls,...objects].map(p=>key(Math.floor(p.x),Math.floor(p.y))));scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();scene.add(world);floorTexture.repeat.set((maxX-minX+5)/2,(maxY-minY+5)/2);const floor=new T.Mesh(new T.PlaneGeometry(maxX-minX+5,maxY-minY+5),new T.MeshLambertMaterial({map:floorTexture}));floor.rotation.x=-Math.PI/2;floor.position.set((minX+maxX+1)/2,0,(minY+maxY+1)/2);world.add(floor);
- const ceilingWidth=maxX-minX+5,ceilingDepth=maxY-minY+5;
- ceilingTexture.repeat.set(ceilingWidth/.20,ceilingDepth);
- const ceiling=new T.Mesh(new T.PlaneGeometry(ceilingWidth,ceilingDepth),new T.MeshBasicMaterial({map:ceilingTexture}));
- ceiling.rotation.x=Math.PI/2;ceiling.position.set((minX+maxX+1)/2,CEILING_HEIGHT,(minY+maxY+1)/2);
- world.add(ceiling);
+function load(data){if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const rawStart=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),rawDest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));if(data.rotas!==undefined&&!Array.isArray(data.rotas))throw Error('A camada rotas deve ser uma lista.');
+ if(data.coberturas!==undefined&&!Array.isArray(data.coberturas))throw Error('A camada coberturas deve ser uma lista.');
+ const coverages=(data.coberturas||[]).map(c=>({x:Number(c.x),y:Number(c.y),largura:Number(c.largura),altura:Number(c.altura),altura_teto:Number(c.altura_teto??CEILING_HEIGHT)}));
+ if(!coverages.every(c=>valid(c)&&Number.isFinite(c.largura)&&c.largura>0&&Number.isFinite(c.altura)&&c.altura>0&&Number.isFinite(c.altura_teto)&&c.altura_teto>0))throw Error('Área de cobertura inválida.');
+ const routePoints=(data.rotas||[]).flatMap(r=>Array.isArray(r?.pontos)?r.pontos.map(p=>point(p||{})):[]);
+ const all=[rawStart,...walls,...objects,...rawDest,...routePoints,...coverages,...coverages.map(c=>({x:c.x+c.largura,y:c.y+c.altura}))];if(!all.every(valid))throw Error('Coordenadas x e y devem ser números finitos.');if(!walls.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)))throw Error('Coordenadas das paredes devem ser inteiras em x e y.');/* O editor salva posições contínuas; A* trabalha com células de 1 metro. */const start=cell(rawStart),dest=rawDest.map(p=>({...p,...cell(p)}));let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest,rawStart,rawDest,manualRoutes:data.rotas||[]};blocked=new Set([...walls,...objects].map(p=>key(Math.floor(p.x),Math.floor(p.y))));scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();scene.add(world);floorTexture.repeat.set((maxX-minX+5)/2,(maxY-minY+5)/2);const floor=new T.Mesh(new T.PlaneGeometry(maxX-minX+5,maxY-minY+5),new T.MeshLambertMaterial({map:floorTexture}));floor.rotation.x=-Math.PI/2;floor.position.set((minX+maxX+1)/2,0,(minY+maxY+1)/2);world.add(floor);
+ addCoverages(coverages);
  const groups=new Map();for(const p of walls){const k=key(Math.floor(p.x/16),Math.floor(p.y/16));if(!groups.has(k))groups.set(k,[]);groups.get(k).push(p)}for(const g of groups.values())instances(g,wallGeometry(),wallMaterial(),1.4);const trees=objects.filter(p=>/arvore|árvore|tree/i.test(p.nome));addTrees(trees);instances(objects.filter(p=>!trees.includes(p)),new T.CylinderGeometry(.28,.38,1.8,6),mat(0x527445),.9);$('dest').replaceChildren(...dest.map((p,i)=>new Option(p.nome,i)));pos.set(start.x+.5,1.65,start.y+.5);angle=0;route=[];notice='Mapa carregado';consult();}
+// Rotas manuais usam metros contínuos, sem deslocamento de meia célula.
+function manualPath(destination,index){
+ const definition=map.manualRoutes.find(r=>r&&r.destino===destination.nome&&
+   (r.destino_indice===undefined||r.destino_indice===index));
+ if(!definition)return null;
+ if(!Array.isArray(definition.pontos)||definition.pontos.length<2)
+  throw Error('A rota manual de '+destination.nome+' precisa de pelo menos dois pontos.');
+ const points=definition.pontos.map(p=>point(p||{}));
+ if(!points.every(valid))throw Error('A rota manual contém coordenadas inválidas.');
+ const start=map.rawStart,end=map.rawDest[index];
+ const raw=[];
+ for(const p of [start,...points,end]){
+  const v=new T.Vector3(p.x,CAMERA_HEIGHT,p.y);
+  if(!raw.length||raw[raw.length-1].distanceTo(v)>1e-6)raw.push(v);
+ }
+ for(let i=0;i<raw.length;i++){
+  if(!safePoint(raw[i].x,raw[i].z,.32)||(i>0&&!safeSegment(raw[i-1],raw[i])))
+   throw Error('Rota manual de '+destination.nome+': trecho '+Math.max(1,i)+' próximo demais ou atravessando uma parede/objeto. Ajuste no editor.');
+ }
+ const curved=smoothPath(raw);
+ // A curva só é usada se todo o percurso permanecer livre.
+ return curved.every((v,i)=>safePoint(v.x,v.z,.32)&&(!i||safeSegment(curved[i-1],v)))?curved:raw;
+}
+
+// Cada retângulo é uma cobertura explícita; a ausência da camada deixa o mapa a céu aberto.
+function addCoverages(areas){
+ for(const area of areas){
+  const geo=new T.PlaneGeometry(area.largura,area.altura),uv=geo.attributes.uv;
+  for(let i=0;i<uv.count;i++){
+   uv.setXY(i,uv.getX(i)*area.largura/.20,uv.getY(i)*area.altura);
+  }
+  const roof=new T.Mesh(geo,new T.MeshLambertMaterial({map:ceilingTexture,
+   color:0xf1f5f7,side:T.DoubleSide,transparent:true,opacity:.82,depthWrite:false}));
+  roof.rotation.x=-Math.PI/2;
+  roof.position.set(area.x+area.largura/2,area.altura_teto,area.y+area.altura/2);
+  roof.userData.cobertura=true;world.add(roof);
+ }
+}
+
 function free(x,y){return x>=bounds.minX&&x<=bounds.maxX&&y>=bounds.minY&&y<=bounds.maxY&&!blocked.has(key(x,y))}
 // A* ponderado: prefere o centro de corredores sem impedir passagens estreitas.
 function clearance(x,y){
@@ -134,7 +174,22 @@ function path(s,d){
  return [];
 }
 let cameraBack=CAMERA_DISTANCE,navSpeed=0;
-$('go').onclick=()=>{if(!map)return;const d=map.dest[$('dest').value];if(!d)return;clearTimeout(returnTimer);pos.set(map.start.x+.5,1.65,map.start.y+.5);angle=0;navSpeed=0;cameraBack=CAMERA_DISTANCE;route=path(map.start,d);if(!route.length){$('feedback').textContent='Rota não encontrada para '+d.nome;return;}notice='Navegando para '+d.nome;$('status').textContent=notice;$('consult').hidden=true;$('navigation').hidden=false;resize();};$('stop').onclick=()=>consult(route.length?'Navegação interrompida.':'Destino alcançado. Selecione outro destino.');$('file').onchange=async e=>{try{load(JSON.parse(await e.target.files[0].text()))}catch(err){notice=err.message}};
+$('go').onclick=()=>{
+ if(!map)return;
+ const index=Number($('dest').value),d=map.dest[index];if(!d)return;
+ clearTimeout(returnTimer);navSpeed=0;cameraBack=CAMERA_DISTANCE;route=[];
+ try{
+  const manual=manualPath(d,index);
+  route=manual===null?path(map.start,d):manual;
+  if(!route.length){$('feedback').textContent='Rota não encontrada para '+d.nome;return;}
+  pos.copy(route[0]);
+  const next=route.find(p=>p.distanceTo(pos)>1e-6);
+  angle=next?Math.atan2(next.x-pos.x,next.z-pos.z):0;
+  notice='Navegando para '+d.nome;
+  $('feedback').textContent='';$('status').textContent=notice;
+  $('consult').hidden=true;$('navigation').hidden=false;resize();
+ }catch(error){route=[];$('feedback').textContent=error.message;}
+};$('stop').onclick=()=>consult(route.length?'Navegação interrompida.':'Destino alcançado. Selecione outro destino.');$('file').onchange=async e=>{try{load(JSON.parse(await e.target.files[0].text()))}catch(err){notice=err.message}};
 function resize(){const w=view.clientWidth,h=view.clientHeight;if(!w||!h)return;renderer.setPixelRatio(ratio);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(view);$('quality').onchange=()=>{ratio=$('quality').value==='high'?Math.min(devicePixelRatio,2):$('quality').value==='low'?.65:1;resize()};resize();
 function tick(now){requestAnimationFrame(tick);const raw=(now-last)/1000;last=now;const dt=Math.min(raw,.05);if(route.length){
  // Consome toda a distância do quadro, inclusive em curvas subdivididas.
@@ -158,4 +213,4 @@ cameraBack=back<cameraBack?back:cameraBack+(back-cameraBack)*(1-Math.exp(-dt*5))
 camera.position.set(pos.x-fx*cameraBack,CAMERA_HEIGHT,pos.z-fz*cameraBack);
 const pitch=CAMERA_PITCH*Math.PI/180;
 camera.lookAt(camera.position.x+fx*Math.cos(pitch),camera.position.y-Math.sin(pitch),camera.position.z+fz*Math.cos(pitch));if(!$('navigation').hidden)renderer.render(scene,camera);frames++;elapsed+=raw;if(elapsed>=2){fps=Math.round(frames/elapsed);frames=0;elapsed=0;if($('quality').value==='auto'&&fps<28&&ratio>.55){ratio=Math.max(.55,ratio-.15);resize()}status.textContent=notice;}}
-try{const r=await fetch('./mapa.json');if(!r.ok)throw Error('Mapa de exemplo indisponível');load(await r.json())}catch(e){notice=e.message;$('feedback').textContent=notice}requestAnimationFrame(tick);
+try{const r=await fetch('./mapa.json',{cache:'no-store'});if(!r.ok)throw Error('Mapa de exemplo indisponível');load(await r.json())}catch(e){notice=e.message;$('feedback').textContent=notice}requestAnimationFrame(tick);
