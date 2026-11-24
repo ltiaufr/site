@@ -131,5 +131,5 @@ for(let d=.1;d<=CAMERA_DISTANCE+.1;d+=.1){if(blocked&&!safePoint(pos.x-fx*d,pos.
 cameraBack=back<cameraBack?back:cameraBack+(back-cameraBack)*(1-Math.exp(-dt*5));
 camera.position.set(pos.x-fx*cameraBack,CAMERA_HEIGHT,pos.z-fz*cameraBack);
 const pitch=CAMERA_PITCH*Math.PI/180;
-camera.lookAt(camera.position.x+fx*Math.cos(pitch),camera.position.y-Math.sin(pitch),camera.position.z+fz*Math.cos(pitch));if(!$('navigation').hidden)renderer.render(scene,camera);frames++;elapsed+=raw;if(elapsed>=2){fps=Math.round(frames/elapsed);frames=0;elapsed=0;if($('quality').value==='auto'&&fps<28&&ratio>.55){ratio=Math.max(.55,ratio-.15);resize()}status.textContent=notice+' | '+fps+' FPS | resolução '+Math.round(ratio*100)+'% | chamadas gráficas '+renderer.info.render.calls;}}
+camera.lookAt(camera.position.x+fx*Math.cos(pitch),camera.position.y-Math.sin(pitch),camera.position.z+fz*Math.cos(pitch));if(!$('navigation').hidden)renderer.render(scene,camera);frames++;elapsed+=raw;if(elapsed>=2){fps=Math.round(frames/elapsed);frames=0;elapsed=0;if($('quality').value==='auto'&&fps<28&&ratio>.55){ratio=Math.max(.55,ratio-.15);resize()}status.textContent=notice;}}
 try{const r=await fetch('./mapa.json');if(!r.ok)throw Error('Mapa de exemplo indisponível');load(await r.json())}catch(e){notice=e.message;$('feedback').textContent=notice}requestAnimationFrame(tick);
