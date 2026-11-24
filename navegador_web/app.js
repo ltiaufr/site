@@ -2,9 +2,10 @@ import * as T from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.modul
 const $=id=>document.getElementById(id), view=$('view'), status=$('status');
 let renderer; try{renderer=new T.WebGLRenderer({antialias:false,powerPreference:'low-power'});}catch(e){status.textContent='WebGL 2 indisponível neste dispositivo.';throw e;}
 view.append(renderer.domElement);const scene=new T.Scene();scene.background=new T.Color(0xaec9dc);scene.fog=new T.Fog(0xaec9dc,45,110);// Ajustes globais da câmera (distâncias em unidades do mapa, ângulos em graus).
-const CAMERA_HEIGHT=2.8;
+const CEILING_HEIGHT=2.8;
+const CAMERA_HEIGHT=1.65;
 const CAMERA_DISTANCE=1.5;
-const CAMERA_PITCH=15;
+const CAMERA_PITCH=2;
 const CAMERA_FOV=75;
 const camera=new T.PerspectiveCamera(CAMERA_FOV,1,.1,120);let world=new T.Group();scene.add(world);scene.add(new T.HemisphereLight(0xffffff,0x777777,2));const light=new T.DirectionalLight(0xffffff,1.3);light.position.set(10,20,5);scene.add(light);
 let map,blocked,bounds,route=[],pos=new T.Vector3(),angle=0,ratio=1,frames=0,elapsed=0,fps=0,notice='',last=performance.now();const key=(x,y)=>x+','+y;const point=p=>({x:Number(p.x),y:Number(p.y)});const valid=p=>Number.isInteger(p.x)&&Number.isInteger(p.y);const mat=color=>new T.MeshLambertMaterial({color});
@@ -18,6 +19,21 @@ function pattern(brick){
  const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(2,renderer.capabilities.getMaxAnisotropy());return t;
 }
 const brickTexture=pattern(true),floorTexture=pattern(false);
+// Forro branco em réguas de 20 cm, com encaixes discretos.
+function makeCeilingTexture(){
+ const c=document.createElement('canvas');c.width=128;c.height=64;
+ const g=c.getContext('2d');
+ const gradient=g.createLinearGradient(0,0,128,0);
+ gradient.addColorStop(0,'#d2d3d4');gradient.addColorStop(.025,'#f4f4f3');
+ gradient.addColorStop(.12,'#fafafa');gradient.addColorStop(.94,'#f7f7f6');
+ gradient.addColorStop(1,'#e2e3e4');
+ g.fillStyle=gradient;g.fillRect(0,0,128,64);
+ g.fillStyle='#c8c9ca';g.fillRect(0,0,2,64);
+ const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;
+ t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
+ return t;
+}
+const ceilingTexture=makeCeilingTexture();
 function wallMaterial(){return new T.MeshLambertMaterial({map:brickTexture});}
 function wallGeometry(){const geo=new T.BoxGeometry(1,2.8,1),uv=geo.attributes.uv;for(let i=0;i<16;i++)uv.setY(i,uv.getY(i)*2.8);return geo;}
 
@@ -43,7 +59,13 @@ let returnTimer=0; const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f
 function results(){const terms=normalize($('search').value).trim().split(/\s+/);const list=$('results');list.replaceChildren();for(const [i,d] of (map?.dest||[]).entries()){if(!terms.every(t=>normalize(d.nome).includes(t)))continue;const b=document.createElement('button');b.textContent=d.nome;b.onclick=()=>{ $('dest').value=i; $('go').click(); };list.append(b);}if(!list.children.length)list.textContent=map?'Nenhum destino encontrado.':'Carregando mapa…';}
 function consult(message=''){clearTimeout(returnTimer);route=[];$('navigation').hidden=true;$('consult').hidden=false;$('search').value='';$('feedback').textContent=message;results();}
 $('search').addEventListener('input',results);for(const row of ['QWERTYUIOP','ASDFGHJKL','ZXCVBNM','1234567890']){const line=document.createElement('div');line.className='keys';for(const c of row){const b=document.createElement('button');b.textContent=c;b.onclick=()=>{$('search').value+=c;results()};line.append(b)}$('keyboard').append(line)}for(const [id,action] of [['space',s=>s+' '],['backspace',s=>s.slice(0,-1)],['clear',()=> '']])$(id).onclick=()=>{$('search').value=action($('search').value);results()};
-function load(data){if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const start=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),dest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));const all=[start,...walls,...objects,...dest];if(!all.every(valid))throw Error('Coordenadas devem ser inteiras em x e y.');let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest};blocked=new Set([...walls,...objects].map(p=>key(p.x,p.y)));scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();scene.add(world);floorTexture.repeat.set((maxX-minX+5)/2,(maxY-minY+5)/2);const floor=new T.Mesh(new T.PlaneGeometry(maxX-minX+5,maxY-minY+5),new T.MeshLambertMaterial({map:floorTexture}));floor.rotation.x=-Math.PI/2;floor.position.set((minX+maxX+1)/2,0,(minY+maxY+1)/2);world.add(floor);const groups=new Map();for(const p of walls){const k=key(Math.floor(p.x/16),Math.floor(p.y/16));if(!groups.has(k))groups.set(k,[]);groups.get(k).push(p)}for(const g of groups.values())instances(g,wallGeometry(),wallMaterial(),1.4);const trees=objects.filter(p=>/arvore|árvore|tree/i.test(p.nome));addTrees(trees);instances(objects.filter(p=>!trees.includes(p)),new T.CylinderGeometry(.28,.38,1.8,6),mat(0x527445),.9);$('dest').replaceChildren(...dest.map((p,i)=>new Option(p.nome,i)));pos.set(start.x+.5,1.65,start.y+.5);angle=0;route=[];notice='Mapa carregado';consult();}
+function load(data){if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const start=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),dest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));const all=[start,...walls,...objects,...dest];if(!all.every(valid))throw Error('Coordenadas devem ser inteiras em x e y.');let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest};blocked=new Set([...walls,...objects].map(p=>key(p.x,p.y)));scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();scene.add(world);floorTexture.repeat.set((maxX-minX+5)/2,(maxY-minY+5)/2);const floor=new T.Mesh(new T.PlaneGeometry(maxX-minX+5,maxY-minY+5),new T.MeshLambertMaterial({map:floorTexture}));floor.rotation.x=-Math.PI/2;floor.position.set((minX+maxX+1)/2,0,(minY+maxY+1)/2);world.add(floor);
+ const ceilingWidth=maxX-minX+5,ceilingDepth=maxY-minY+5;
+ ceilingTexture.repeat.set(ceilingWidth/.20,ceilingDepth);
+ const ceiling=new T.Mesh(new T.PlaneGeometry(ceilingWidth,ceilingDepth),new T.MeshBasicMaterial({map:ceilingTexture}));
+ ceiling.rotation.x=Math.PI/2;ceiling.position.set((minX+maxX+1)/2,CEILING_HEIGHT,(minY+maxY+1)/2);
+ world.add(ceiling);
+ const groups=new Map();for(const p of walls){const k=key(Math.floor(p.x/16),Math.floor(p.y/16));if(!groups.has(k))groups.set(k,[]);groups.get(k).push(p)}for(const g of groups.values())instances(g,wallGeometry(),wallMaterial(),1.4);const trees=objects.filter(p=>/arvore|árvore|tree/i.test(p.nome));addTrees(trees);instances(objects.filter(p=>!trees.includes(p)),new T.CylinderGeometry(.28,.38,1.8,6),mat(0x527445),.9);$('dest').replaceChildren(...dest.map((p,i)=>new Option(p.nome,i)));pos.set(start.x+.5,1.65,start.y+.5);angle=0;route=[];notice='Mapa carregado';consult();}
 function free(x,y){return x>=bounds.minX&&x<=bounds.maxX&&y>=bounds.minY&&y<=bounds.maxY&&!blocked.has(key(x,y))}
 // A* ponderado: prefere o centro de corredores sem impedir passagens estreitas.
 function clearance(x,y){
@@ -108,7 +130,7 @@ function path(s,d){
  return [];
 }
 let cameraBack=CAMERA_DISTANCE,navSpeed=0;
-$('go').onclick=()=>{if(!map)return;const d=map.dest[$('dest').value];if(!d)return;clearTimeout(returnTimer);pos.set(map.start.x+.5,1.65,map.start.y+.5);angle=0;navSpeed=0;cameraBack=CAMERA_DISTANCE;route=path(map.start,d);if(!route.length){$('feedback').textContent='Rota não encontrada para '+d.nome;return;}notice='Navegando para '+d.nome;$('status').textContent=notice;$('consult').hidden=true;$('navigation').hidden=false;resize();};$('stop').onclick=()=>consult('Navegação interrompida.');$('file').onchange=async e=>{try{load(JSON.parse(await e.target.files[0].text()))}catch(err){notice=err.message}};
+$('go').onclick=()=>{if(!map)return;const d=map.dest[$('dest').value];if(!d)return;clearTimeout(returnTimer);pos.set(map.start.x+.5,1.65,map.start.y+.5);angle=0;navSpeed=0;cameraBack=CAMERA_DISTANCE;route=path(map.start,d);if(!route.length){$('feedback').textContent='Rota não encontrada para '+d.nome;return;}notice='Navegando para '+d.nome;$('status').textContent=notice;$('consult').hidden=true;$('navigation').hidden=false;resize();};$('stop').onclick=()=>consult(route.length?'Navegação interrompida.':'Destino alcançado. Selecione outro destino.');$('file').onchange=async e=>{try{load(JSON.parse(await e.target.files[0].text()))}catch(err){notice=err.message}};
 function resize(){const w=view.clientWidth,h=view.clientHeight;if(!w||!h)return;renderer.setPixelRatio(ratio);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(view);$('quality').onchange=()=>{ratio=$('quality').value==='high'?Math.min(devicePixelRatio,2):$('quality').value==='low'?.65:1;resize()};resize();
 function tick(now){requestAnimationFrame(tick);const raw=(now-last)/1000;last=now;const dt=Math.min(raw,.05);if(route.length){
  // Consome toda a distância do quadro, inclusive em curvas subdivididas.
@@ -124,7 +146,7 @@ function tick(now){requestAnimationFrame(tick);const raw=(now-last)/1000;last=no
   for(const p of route){const dist=look.distanceTo(p);if(dist>=remaining){look.lerp(p,remaining/Math.max(dist,1e-9));break;}look.copy(p);remaining-=dist;}
   const delta=look.sub(pos);
   if(delta.lengthSq()>1e-8){const desired=Math.atan2(delta.x,delta.z),diff=Math.atan2(Math.sin(desired-angle),Math.cos(desired-angle));angle+=diff*(1-Math.exp(-dt*4.5));}
- }else{notice='Destino alcançado';status.textContent=notice;returnTimer=setTimeout(()=>consult('Destino alcançado. Selecione outro destino.'),2500);}
+ }else{notice='Destino alcançado';status.textContent=notice;navSpeed=0;}
 }const fx=Math.sin(angle),fz=Math.cos(angle);let back=CAMERA_DISTANCE;
 // Evita recuar a câmera para dentro de paredes ou objetos.
 for(let d=.1;d<=CAMERA_DISTANCE+.1;d+=.1){if(blocked&&!safePoint(pos.x-fx*d,pos.z-fz*d,.22)){back=Math.max(0,d-.2);break;}}
