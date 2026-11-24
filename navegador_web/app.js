@@ -115,14 +115,18 @@ function path(s,d){
  const target=key(d.x,d.y),start=key(s.x,s.y),prev=new Map([[start,null]]),cost=new Map([[start,0]]),heap=[];
  const push=v=>{let i=heap.length;heap.push(v);while(i){const j=(i-1)>>1;if(heap[j].f<=v.f)break;heap[i]=heap[j];i=j;}heap[i]=v;};
  const pop=()=>{const top=heap[0],v=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let j=i*2+1;if(j+1<heap.length&&heap[j+1].f<heap[j].f)j++;if(heap[j].f>=v.f)break;heap[i]=heap[j];i=j;}heap[i]=v;}return top;};
+ // Reaproveita a distância dos obstáculos durante esta busca.
+ const clearances=new Map();
+ const cachedClearance=(x,y)=>{const k=key(x,y);if(!clearances.has(k))clearances.set(k,clearance(x,y));return clearances.get(k);};
  const h=(x,y)=>Math.abs(x-d.x)+Math.abs(y-d.y);
  push({...s,g:0,f:h(s.x,s.y)});
- for(let count=0;heap.length&&count<250000;count++){
+ // A grade possui limites finitos; percorre a busca até encontrar o destino ou esgotar as células acessíveis.
+ while(heap.length){
   const p=pop(),k=key(p.x,p.y);if(p.g!==cost.get(k))continue;
   if(k===target){const raw=[];let cur=p;while(cur){raw.push(new T.Vector3(cur.x+.5,1.65,cur.y+.5));cur=prev.get(key(cur.x,cur.y));}return smoothPath(raw.reverse());}
   for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
    const x=p.x+dx,y=p.y+dy,n=key(x,y);if(!free(x,y))continue;
-   const g=p.g+1+2.4*Math.max(0,2-clearance(x,y))**2;
+   const g=p.g+1+2.4*Math.max(0,2-cachedClearance(x,y))**2;
    if(g>=(cost.get(n)??Infinity))continue;
    cost.set(n,g);prev.set(n,p);push({x,y,g,f:g+h(x,y)});
   }
