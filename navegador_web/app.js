@@ -1,13 +1,15 @@
 import * as T from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+// Escala somente da apresentação; JSON, grade de rotas e colisões mantêm suas coordenadas.
+const WORLD_SCALE=.5;
 const $=id=>document.getElementById(id), view=$('view'), status=$('status');
 let renderer; try{renderer=new T.WebGLRenderer({antialias:true,powerPreference:'low-power'});}catch(e){status.textContent='WebGL 2 indisponível neste dispositivo.';throw e;}
-view.append(renderer.domElement);const scene=new T.Scene();scene.background=new T.Color(0xaec9dc);scene.fog=new T.Fog(0xaec9dc,45,110);// Ajustes globais da câmera (distâncias em unidades do mapa, ângulos em graus).
+view.append(renderer.domElement);const scene=new T.Scene();scene.background=new T.Color(0xaec9dc);scene.fog=new T.Fog(0xaec9dc,45*WORLD_SCALE,110*WORLD_SCALE);// Ajustes globais da câmera (distâncias em unidades do mapa, ângulos em graus).
 const CEILING_HEIGHT=2.8;
 const CAMERA_HEIGHT=1.65;
 const CAMERA_DISTANCE=1.5;
 const CAMERA_PITCH=2;
 const CAMERA_FOV=75;
-const camera=new T.PerspectiveCamera(CAMERA_FOV,1,.1,120);let world=new T.Group();scene.add(world);scene.add(new T.HemisphereLight(0xffffff,0x777777,2));const light=new T.DirectionalLight(0xffffff,1.3);light.position.set(10,20,5);scene.add(light);
+const camera=new T.PerspectiveCamera(CAMERA_FOV,1,.1*WORLD_SCALE,120*WORLD_SCALE);let world=new T.Group();world.scale.setScalar(WORLD_SCALE);scene.add(world);scene.add(new T.HemisphereLight(0xffffff,0x777777,2));const light=new T.DirectionalLight(0xffffff,1.3);light.position.set(10,20,5).multiplyScalar(WORLD_SCALE);scene.add(light);
 let map,blocked,objectBlocked,bounds,route=[],pos=new T.Vector3(),angle=0,ratio=1,frames=0,elapsed=0,fps=0,notice='',last=performance.now();const key=(x,y)=>x+','+y;const point=p=>({x:Number(p.x),y:Number(p.y)});const valid=p=>Number.isFinite(p.x)&&Number.isFinite(p.y);const cell=p=>({x:Math.floor(p.x),y:Math.floor(p.y)});const mat=color=>new T.MeshLambertMaterial({color});
 
 function pattern(brick){
@@ -255,7 +257,7 @@ $('search').addEventListener('input',results);for(const row of ['QWERTYUIOP','AS
 function load(data){if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const rawStart=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),rawDest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));if(data.rotas!==undefined&&!Array.isArray(data.rotas))throw Error('A camada rotas deve ser uma lista.');
  const coverages=normalizeCoverages(data.coberturas||[]);
  const routePoints=(data.rotas||[]).flatMap(r=>Array.isArray(r?.pontos)?r.pontos.map(p=>point(p||{})):[]);
- const all=[rawStart,...walls,...objects,...rawDest,...routePoints,...coverages.flatMap(c=>c.pontos),...(data.portas||[]).flatMap(d=>[{x:Number(d.x1),y:Number(d.y1)},{x:Number(d.x2),y:Number(d.y2)}]),...pavementAreas(data).flatMap(p=>[{x:p.x,y:p.y},{x:p.x+p.w,y:p.y+p.h}])];if(!all.every(valid))throw Error('Coordenadas x e y devem ser números finitos.');if(!walls.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)))throw Error('Coordenadas das paredes devem ser inteiras em x e y.');/* O editor salva posições contínuas; A* trabalha com células de 1 metro. */const start=cell(rawStart),dest=rawDest.map(p=>({...p,...cell(p)}));let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest,rawStart,rawDest,manualRoutes:data.rotas||[]};architecture=buildArchitecture(walls,data.portas||[]);blocked=new Set(objects.map(p=>key(Math.floor(p.x),Math.floor(p.y))));objectBlocked=new Set(blocked);for(const k of architecture.index.keys()){const [x,y]=k.split(',').map(Number);if(architectureHit(architecture,x+.5,y+.5))blocked.add(k);}scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();scene.add(world);drawPavements(data,{x:minX-2,y:minY-2,w:maxX-minX+5,h:maxY-minY+5});
+ const all=[rawStart,...walls,...objects,...rawDest,...routePoints,...coverages.flatMap(c=>c.pontos),...(data.portas||[]).flatMap(d=>[{x:Number(d.x1),y:Number(d.y1)},{x:Number(d.x2),y:Number(d.y2)}]),...pavementAreas(data).flatMap(p=>[{x:p.x,y:p.y},{x:p.x+p.w,y:p.y+p.h}])];if(!all.every(valid))throw Error('Coordenadas x e y devem ser números finitos.');if(!walls.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)))throw Error('Coordenadas das paredes devem ser inteiras em x e y.');/* O editor salva posições contínuas; A* trabalha com células de 1 metro. */const start=cell(rawStart),dest=rawDest.map(p=>({...p,...cell(p)}));let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest,rawStart,rawDest,manualRoutes:data.rotas||[]};architecture=buildArchitecture(walls,data.portas||[]);blocked=new Set(objects.map(p=>key(Math.floor(p.x),Math.floor(p.y))));objectBlocked=new Set(blocked);for(const k of architecture.index.keys()){const [x,y]=k.split(',').map(Number);if(architectureHit(architecture,x+.5,y+.5))blocked.add(k);}scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();world.scale.setScalar(WORLD_SCALE);scene.add(world);drawPavements(data,{x:minX-2,y:minY-2,w:maxX-minX+5,h:maxY-minY+5});
  addCoverages(coverages);
  drawArchitecture(architecture);const trees=objects.filter(p=>/arvore|árvore|tree/i.test(p.nome));addTrees(trees);instances(objects.filter(p=>!trees.includes(p)),new T.CylinderGeometry(.28,.38,1.8,6),mat(0x527445),.9);$('dest').replaceChildren(...dest.map((p,i)=>new Option(p.nome,i)));pos.set(start.x+.5,1.65,start.y+.5);angle=0;route=[];notice='Mapa carregado';consult();}
 // Rotas manuais usam metros contínuos, sem deslocamento de meia célula.
@@ -457,7 +459,8 @@ function plannedSpeed(points,position){
  return Math.min(target,Math.max(.6,Math.sqrt(2*NAV_BRAKING*travelled)));
 }
 
-function tick(now){requestAnimationFrame(tick);const raw=(now-last)/1000;last=now;const dt=Math.min(raw,.05);if(route.length){
+function tick(now){requestAnimationFrame(tick);const raw=(now-last)/1000;last=now;const dt=Math.min(raw,.05)/WORLD_SCALE;if(route.length){
+ // O relógio de navegação acompanha a escala: 50% de distância com a mesma velocidade visual.
  // Consome toda a distância do quadro, inclusive em curvas subdivididas.
  const targetSpeed=plannedSpeed(route,pos);
  navSpeed=targetSpeed>navSpeed?Math.min(targetSpeed,navSpeed+dt*NAV_ACCELERATION):
@@ -478,7 +481,7 @@ function tick(now){requestAnimationFrame(tick);const raw=(now-last)/1000;last=no
 // Evita recuar a câmera para dentro de paredes ou objetos.
 for(let d=.1;d<=CAMERA_DISTANCE+.1;d+=.1){if(blocked&&!safePoint(pos.x-fx*d,pos.z-fz*d,.22)){back=Math.max(0,d-.2);break;}}
 cameraBack=back<cameraBack?back:cameraBack+(back-cameraBack)*(1-Math.exp(-dt*5));
-camera.position.set(pos.x-fx*cameraBack,CAMERA_HEIGHT+cameraGround,pos.z-fz*cameraBack);
+camera.position.set(pos.x-fx*cameraBack,CAMERA_HEIGHT+cameraGround,pos.z-fz*cameraBack).multiplyScalar(WORLD_SCALE);
 const pitch=CAMERA_PITCH*Math.PI/180;
 camera.lookAt(camera.position.x+fx*Math.cos(pitch),camera.position.y-Math.sin(pitch),camera.position.z+fz*Math.cos(pitch));if(!$('navigation').hidden)renderer.render(scene,camera);frames++;elapsed+=raw;if(elapsed>=2){fps=Math.round(frames/elapsed);frames=0;elapsed=0;if($('quality').value==='auto'&&fps<28&&ratio>.55){ratio=Math.max(.55,ratio-.15);resize()}status.textContent=notice;}}
 try{const r=await fetch('./mapa.json',{cache:'no-store'});if(!r.ok)throw Error('Mapa de exemplo indisponível');load(await r.json())}catch(e){notice=e.message;$('feedback').textContent=notice}requestAnimationFrame(tick);
