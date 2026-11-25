@@ -250,11 +250,57 @@ function drawPavements(data,rect){
  }
 }
 
+
+const quick=document.createElement('section');quick.hidden=true;quick.style.cssText='height:100%;display:flex;flex-direction:column;background:#eef2f5;color:#24354c';
+quick.innerHTML='<div style="padding:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button id="qBack">Voltar à consulta</button><button id="qReplay">Repetir</button><button id="qFit">Mapa inteiro</button><button id="qRoute">Enquadrar rota</button><button id="qPlus" aria-label="Ampliar">+</button><button id="qMinus" aria-label="Reduzir">−</button><button id="q3d">Navegação 3D</button><strong id="qTitle" role="status"></strong></div><div style="flex:1;min-height:0;position:relative"><canvas id="qCanvas" style="touch-action:none"></canvas></div><div style="padding:8px;text-align:center">● Início (verde) · ● Destino (vermelho) · Linha azul: percurso</div>';
+document.body.append(quick);
+const choice=document.createElement('dialog');choice.style.cssText='border:0;border-radius:16px;padding:24px;max-width:90vw;color:#24354c;background:#eef2f5';
+choice.innerHTML='<h2 id="qChoiceTitle"></h2><p>Escolha a modalidade de consulta</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="qOpen">Consulta rápida 2D</button><button id="qChoose3d">Navegação 3D</button><button id="qCancel">Cancelar</button></div>';document.body.append(choice);
+let qPoints=[],qData=null,qStart=0,qFrame=0,qZoom=1,qFocus=null,qLength=0,qDuration=0,qIndex=0,qCumulative=[],qPan={x:0,y:0};
+const qc=$('qCanvas'),qg=qc.getContext('2d');
+function qSelect(i){$('dest').value=i;$('qChoiceTitle').textContent=map.dest[i].nome;choice.showModal();}
+$('qCancel').onclick=()=>choice.close();
+$('qChoose3d').onclick=()=>{choice.close();$('go').click();};
+function qClose(){cancelAnimationFrame(qFrame);quick.hidden=true;}
+function qDraw(now){
+ if(quick.hidden)return;
+ const w=qc.clientWidth,h=qc.clientHeight;if(!w||!h){qFrame=requestAnimationFrame(qDraw);return;}
+ const dpr=Math.min(devicePixelRatio||1,2);if(qc.width!==Math.round(w*dpr)||qc.height!==Math.round(h*dpr)){qc.width=Math.round(w*dpr);qc.height=Math.round(h*dpr);}
+ const g=qg;g.setTransform(dpr,0,0,dpr,0,0);g.fillStyle='#f8fafc';g.fillRect(0,0,w,h);
+ const b=qFocus||bounds,scale=Math.max(.0001,Math.min(Math.max(1,w-48)/Math.max(1,b.maxX-b.minX),Math.max(1,h-48)/Math.max(1,b.maxY-b.minY)))*qZoom;
+ const X=x=>w/2+(x-(b.minX+b.maxX)/2)*scale+qPan.x,Y=y=>h/2+(y-(b.minY+b.maxY)/2)*scale+qPan.y;
+ const line=(a,b,color,width)=>{g.strokeStyle=color;g.lineWidth=width;g.beginPath();g.moveTo(X(a.x),Y(a.y));g.lineTo(X(b.x),Y(b.y));g.stroke();};
+ for(const p of pavementAreas(qData)){g.fillStyle=/asfalto|rua|paviment/.test(p.material)?'#aab1b8':/grama/.test(p.material)?'#cce2b9':/terra/.test(p.material)?'#ddc8ad':'#e4e1da';g.fillRect(X(p.x),Y(p.y),p.w*scale,p.h*scale);}
+ for(const c of normalizeCoverages(qData.coberturas||[])){g.fillStyle='#e5ebf1';g.beginPath();c.pontos.forEach((p,i)=>i?g.lineTo(X(p.x),Y(p.y)):g.moveTo(X(p.x),Y(p.y)));g.closePath();g.fill();}
+ g.lineCap='round';g.lineJoin='round';
+ for(const p of architecture.pieces)line(p.a,p.b,'#354657',Math.max(1.2,p.width*scale));
+ for(const p of architecture.joints){g.fillStyle='#354657';g.beginPath();g.arc(X(p.x),Y(p.y),Math.max(.7,p.r*scale),0,Math.PI*2);g.fill();}
+ for(const d of architecture.doors)line({x:d.cx-d.ux*d.width/2,y:d.cy-d.uy*d.width/2},{x:d.cx+d.ux*d.width/2,y:d.cy+d.uy*d.width/2},'#b78b55',Math.max(1,scale*.12));
+ for(const p of qData.objetos||[]){g.fillStyle=/arvore|árvore|tree/i.test(p.nome||p.tipo||'')?'#75a86c':'#8796a3';g.beginPath();g.arc(X(Number(p.x)+.5),Y(Number(p.y)+.5),Math.max(1.5,scale*.35),0,Math.PI*2);g.fill();}
+ const progress=Math.min(1,Math.max(0,(now-qStart)/qDuration)),distance=qLength*progress;
+ g.beginPath();g.moveTo(X(qPoints[0].x),Y(qPoints[0].z));
+ for(let i=1;i<qPoints.length;i++){const a=qPoints[i-1],b=qPoints[i];if(qCumulative[i]<=distance){g.lineTo(X(b.x),Y(b.z));continue;}const t=(distance-qCumulative[i-1])/Math.max(1e-9,qCumulative[i]-qCumulative[i-1]);g.lineTo(X(a.x+(b.x-a.x)*t),Y(a.z+(b.z-a.z)*t));break;}
+ g.strokeStyle='#fff';g.lineWidth=7;g.stroke();g.strokeStyle='#1769d2';g.lineWidth=4;g.stroke();
+ const marker=(p,color,label)=>{const x=X(p.x),y=Y(p.z);g.fillStyle=color;g.beginPath();g.arc(x,y,6,0,Math.PI*2);g.fill();g.strokeStyle='#fff';g.lineWidth=2;g.stroke();g.font='bold 13px system-ui';g.textAlign=x>w*.65?'right':'left';const tx=x+(x>w*.65?-10:10);g.strokeStyle='#fff';g.lineWidth=4;g.strokeText(label,tx,y-10);g.fillStyle='#24354c';g.fillText(label,tx,y-10);};
+ marker(qPoints[0],'#168442','Início');marker(qPoints.at(-1),'#c83b36',map.dest[qIndex].nome);
+ if(progress<1)qFrame=requestAnimationFrame(qDraw);
+}
+function qRefresh(){cancelAnimationFrame(qFrame);qFrame=requestAnimationFrame(qDraw);}
+$('qOpen').onclick=()=>{choice.close();try{qIndex=Number($('dest').value);const d=map.dest[qIndex];qPoints=manualPath(d,qIndex)??path(map.start,d);if(!qPoints.length)throw Error('Rota não encontrada para '+d.nome);qCumulative=[0];for(let i=1;i<qPoints.length;i++)qCumulative.push(qCumulative[i-1]+qPoints[i-1].distanceTo(qPoints[i]));qLength=qCumulative.at(-1);qDuration=Math.max(1800,Math.min(12000,qLength*90));qStart=performance.now();qZoom=1;qFocus=null;qPan={x:0,y:0};$('qTitle').textContent=d.nome+' · '+Math.round(qLength)+' m';$('consult').hidden=true;quick.hidden=false;qRefresh();}catch(e){$('feedback').textContent=e.message;}};
+$('qBack').onclick=()=>{qClose();$('consult').hidden=false;};
+$('q3d').onclick=()=>{qClose();$('dest').value=qIndex;$('go').click();if($('navigation').hidden)$('consult').hidden=false;};
+$('qReplay').onclick=()=>{qStart=performance.now();qRefresh();};
+$('qFit').onclick=()=>{qFocus=null;qZoom=1;qPan={x:0,y:0};qRefresh();};
+$('qRoute').onclick=()=>{let xs=qPoints.map(p=>p.x),ys=qPoints.map(p=>p.z);qFocus={minX:Math.min(...xs)-2,maxX:Math.max(...xs)+2,minY:Math.min(...ys)-2,maxY:Math.max(...ys)+2};qZoom=1;qPan={x:0,y:0};qRefresh();};
+$('qPlus').onclick=()=>{qZoom=Math.min(20,qZoom*1.35);qRefresh();};$('qMinus').onclick=()=>{qZoom=Math.max(.3,qZoom/1.35);qRefresh();};
+let qDrag=null;qc.addEventListener('pointerdown',e=>{qDrag={x:e.clientX,y:e.clientY};qc.setPointerCapture(e.pointerId);});qc.addEventListener('pointermove',e=>{if(!qDrag)return;qPan.x+=e.clientX-qDrag.x;qPan.y+=e.clientY-qDrag.y;qDrag={x:e.clientX,y:e.clientY};qRefresh();});for(const event of ['pointerup','pointercancel','lostpointercapture'])qc.addEventListener(event,()=>qDrag=null);
+new ResizeObserver(()=>{if(!quick.hidden)qRefresh();}).observe(qc);
+
 let returnTimer=0; const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-function results(){const terms=normalize($('search').value).trim().split(/\s+/);const list=$('results');list.replaceChildren();for(const [i,d] of (map?.dest||[]).entries()){if(!terms.every(t=>normalize(d.nome).includes(t)))continue;const b=document.createElement('button');b.textContent=d.nome;b.onclick=()=>{ $('dest').value=i; $('go').click(); };list.append(b);}if(!list.children.length)list.textContent=map?'Nenhum destino encontrado.':'Carregando mapa…';}
+function results(){const terms=normalize($('search').value).trim().split(/\s+/);const list=$('results');list.replaceChildren();for(const [i,d] of (map?.dest||[]).entries()){if(!terms.every(t=>normalize(d.nome).includes(t)))continue;const b=document.createElement('button');b.textContent=d.nome;b.onclick=()=>{ qSelect(i); };list.append(b);}if(!list.children.length)list.textContent=map?'Nenhum destino encontrado.':'Carregando mapa…';}
 function consult(message=''){clearTimeout(returnTimer);route=[];$('navigation').hidden=true;$('consult').hidden=false;$('search').value='';$('feedback').textContent=message;results();}
 $('search').addEventListener('input',results);for(const row of ['QWERTYUIOP','ASDFGHJKL','ZXCVBNM','1234567890']){const line=document.createElement('div');line.className='keys';for(const c of row){const b=document.createElement('button');b.textContent=c;b.onclick=()=>{$('search').value+=c;results()};line.append(b)}$('keyboard').append(line)}for(const [id,action] of [['space',s=>s+' '],['backspace',s=>s.slice(0,-1)],['clear',()=> '']])$(id).onclick=()=>{$('search').value=action($('search').value);results()};
-function load(data){if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const rawStart=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),rawDest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));if(data.rotas!==undefined&&!Array.isArray(data.rotas))throw Error('A camada rotas deve ser uma lista.');
+function load(data){qData=data;if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const rawStart=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),rawDest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));if(data.rotas!==undefined&&!Array.isArray(data.rotas))throw Error('A camada rotas deve ser uma lista.');
  const coverages=normalizeCoverages(data.coberturas||[]);
  const routePoints=(data.rotas||[]).flatMap(r=>Array.isArray(r?.pontos)?r.pontos.map(p=>point(p||{})):[]);
  const all=[rawStart,...walls,...objects,...rawDest,...routePoints,...coverages.flatMap(c=>c.pontos),...(data.portas||[]).flatMap(d=>[{x:Number(d.x1),y:Number(d.y1)},{x:Number(d.x2),y:Number(d.y2)}]),...pavementAreas(data).flatMap(p=>[{x:p.x,y:p.y},{x:p.x+p.w,y:p.y+p.h}])];if(!all.every(valid))throw Error('Coordenadas x e y devem ser números finitos.');if(!walls.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)))throw Error('Coordenadas das paredes devem ser inteiras em x e y.');/* O editor salva posições contínuas; A* trabalha com células de 1 metro. */const start=cell(rawStart),dest=rawDest.map(p=>({...p,...cell(p)}));let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest,rawStart,rawDest,manualRoutes:data.rotas||[]};architecture=buildArchitecture(walls,data.portas||[]);blocked=new Set(objects.map(p=>key(Math.floor(p.x),Math.floor(p.y))));objectBlocked=new Set(blocked);for(const k of architecture.index.keys()){const [x,y]=k.split(',').map(Number);if(architectureHit(architecture,x+.5,y+.5))blocked.add(k);}scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();world.scale.setScalar(WORLD_SCALE);scene.add(world);drawPavements(data,{x:minX-2,y:minY-2,w:maxX-minX+5,h:maxY-minY+5});
