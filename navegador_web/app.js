@@ -42,19 +42,52 @@ function wallGeometry(){const geo=new T.BoxGeometry(1,2.8,1),uv=geo.attributes.u
 function instances(items,geo,material,height){if(!items.length){geo.dispose();material.dispose();return;}const mesh=new T.InstancedMesh(geo,material,items.length),m=new T.Matrix4();items.forEach((p,i)=>{m.makeTranslation(p.x+.5,height,p.y+.5);mesh.setMatrixAt(i,m)});mesh.computeBoundingSphere();world.add(mesh)}
 
 // Sprite provisório: uma única textura RGBA, gerada uma vez e compartilhada.
-function makeTreeTexture(){
- const c=document.createElement('canvas');c.width=128;c.height=128;const g=c.getContext('2d');
- let seed=8341;const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};
- g.fillStyle='#76543a';g.beginPath();g.moveTo(57,126);g.lineTo(70,126);g.lineTo(66,57);g.lineTo(61,57);g.closePath();g.fill();
- g.strokeStyle='#705038';g.lineWidth=4;for(const [x,y] of [[30,53],[93,48],[46,31],[78,25]]){g.beginPath();g.moveTo(64,91);g.lineTo(x,y);g.stroke();}
- for(let i=0;i<780;i++){const x=64+(rnd()-.5)*112,y=49+(rnd()-.5)*86; if(((x-64)/54)**2+((y-49)/40)**2>1)continue;const r=3+rnd()*7;const v=Math.floor(65+rnd()*70+(1-y/128)*20);g.fillStyle='rgb('+Math.floor(v*.62)+','+v+','+Math.floor(v*.43)+')';g.beginPath();g.ellipse(x,y,r,r*.75,rnd()*3,0,Math.PI*2);g.fill();}
+// Três silhuetas de vegetação, texturas RGBA compartilhadas e billboards instanciados.
+function treeType(name){const n=String(name).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();return /3|grande|alta/.test(n)?2:/2|media/.test(n)?1:0;}
+function vegetationTexture(type){
+ const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');let seed=1427+type*123;const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+ const trunk=g.createLinearGradient(57,0,72,0);trunk.addColorStop(0,'#493b27');trunk.addColorStop(.5,'#967653');trunk.addColorStop(1,'#57442d');g.fillStyle=trunk;g.beginPath();g.moveTo(57,127);g.lineTo(71,127);g.lineTo(65,38);g.lineTo(61,38);g.closePath();g.fill();
+ const clusters=[[[64,42,42,37],[35,60,24,21],[91,58,27,23]],[[64,28,26,26],[42,51,25,28],[84,51,27,28],[64,73,29,20]],[[64,35,39,28],[30,48,28,23],[98,46,28,23],[49,67,30,19],[82,65,29,21]]][type];
+ g.strokeStyle='#705339';g.lineWidth=3;for(const [x,y] of clusters){g.beginPath();g.moveTo(64,100);g.lineTo(x,y);g.stroke();}
+ for(const [cx,cy,rx,ry] of clusters){for(let i=0;i<420;i++){const a=rnd()*Math.PI*2,rr=Math.sqrt(rnd()),x=cx+Math.cos(a)*rx*rr,y=cy+Math.sin(a)*ry*rr;const v=Math.floor(64+80*rnd()+25*(1-y/128));g.fillStyle='rgb('+Math.floor(v*(type===1?.48:.67))+','+v+','+Math.floor(v*.44)+')';g.beginPath();g.ellipse(x,y,2+rnd()*4,1.5+rnd()*3,rnd()*3,0,Math.PI*2);g.fill();}}
  const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t;
 }
-const treeTexture=makeTreeTexture();
+const vegetationTextures=[0,1,2].map(vegetationTexture);
 function addTrees(items){
- if(!items.length)return;
- const material=new T.SpriteMaterial({map:treeTexture,alphaTest:.5,transparent:false,depthWrite:true});
- for(const p of items){const s=new T.Sprite(material);s.center.set(.5,0);s.scale.set(3.5,3.5,1);s.position.set(p.x+.5,0,p.y+.5);world.add(s);}
+ const sizes=[[2.5,3.5],[3.2,5],[5.5,6.5]];
+ for(let type=0;type<3;type++){
+  const groups=new Map();for(const p of items){if(treeType(p.nome)!==type)continue;const k=Math.floor(p.x/32)+','+Math.floor(p.y/32);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(p);}
+  for(const list of groups.values()){
+   const geo=new T.PlaneGeometry(1,1);geo.translate(0,.5,0);
+   const material=new T.MeshBasicMaterial({map:vegetationTextures[type],alphaTest:.5,side:T.DoubleSide,transparent:false});
+   material.onBeforeCompile=shader=>{shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>',`vec4 center = modelViewMatrix * instanceMatrix * vec4(0.,0.,0.,1.);
+   vec3 sz = vec3(length(instanceMatrix[0].xyz),length(instanceMatrix[1].xyz),1.);
+   float ws=length(modelMatrix[0].xyz);
+   vec4 mvPosition=center+vec4(position.x*sz.x*ws,position.y*sz.y*ws,0.,0.);
+   gl_Position=projectionMatrix*mvPosition;`);};
+   const mesh=new T.InstancedMesh(geo,material,list.length),m=new T.Matrix4();
+   list.forEach((p,i)=>{const v=.9+.2*Math.abs(Math.sin(p.x*12.9898+p.y*78.233));m.makeScale(sizes[type][0]*v,sizes[type][1]*v,1);m.setPosition(p.x+.5,0,p.y+.5);mesh.setMatrixAt(i,m);});mesh.computeBoundingSphere();mesh.boundingSphere.radius+=8;world.add(mesh);
+  }
+ }
+}
+let fences=[];
+function readFences(data){return (Array.isArray(data.alambrados)?data.alambrados:[]).map(f=>({a:{x:Number(f.x1),y:Number(f.y1)},b:{x:Number(f.x2),y:Number(f.y2)},height:Number(f.altura??2),step:Number(f.espacamento_postes??2.5),base:Number(f.base_concreto??.2)})).filter(f=>valid(f.a)&&valid(f.b)&&Math.hypot(f.b.x-f.a.x,f.b.y-f.a.y)>.01&&Number.isFinite(f.height)&&f.height>0&&Number.isFinite(f.step)&&f.step>0&&Number.isFinite(f.base)&&f.base>=0);}
+function fenceHit(x,y,r){return fences.some(f=>pointSegment({x,y},f.a,f.b)<=r+.06);}
+function drawFences(){
+ const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.strokeStyle='#64736d';g.lineWidth=3;for(let i=-64;i<=128;i+=32){g.beginPath();g.moveTo(i,0);g.lineTo(i+64,64);g.moveTo(i,0);g.lineTo(i-64,64);g.stroke();}
+ const tex=new T.CanvasTexture(c);tex.wrapS=tex.wrapT=T.RepeatWrapping;tex.colorSpace=T.SRGBColorSpace;
+ const meshMat=new T.MeshBasicMaterial({map:tex,side:T.DoubleSide,alphaTest:.35,transparent:false});meshMat.userData.fenceTexture=tex;
+ for(const f of fences){
+  const dx=f.b.x-f.a.x,dy=f.b.y-f.a.y,len=Math.hypot(dx,dy),n=Math.ceil(len/Math.max(.5,f.step)),base=Math.min(f.base,f.height*.9),angle=-Math.atan2(dy,dx);
+  // Divide long stretches into short panels so frustum culling remains effective.
+  for(let i=0;i<n;i+=12){
+   const count=Math.min(12,n-i),lo=len*i/n,hi=len*(i+count)/n,l=hi-lo,cx=f.a.x+dx*(lo+hi)/(2*len),cy=f.a.y+dy*(lo+hi)/(2*len);
+   const geo=new T.PlaneGeometry(l,f.height-base),uv=geo.attributes.uv;for(let j=0;j<uv.count;j++)uv.setXY(j,uv.getX(j)*l*2,uv.getY(j)*(f.height-base)*2);
+   const panel=new T.Mesh(geo,meshMat);panel.position.set(cx,(f.height+base)/2,cy);panel.rotation.y=angle;world.add(panel);
+   if(base>0){const footing=new T.Mesh(new T.BoxGeometry(l,base,.14),mat(0xa2a3a0));footing.position.set(cx,base/2,cy);footing.rotation.y=angle;world.add(footing);}
+   const posts=new T.InstancedMesh(new T.BoxGeometry(.09,f.height+.06,.09),mat(0x65716e),count+(i+count===n?1:0)),m=new T.Matrix4();for(let j=0;j<posts.count;j++){const t=(i+j)/n;m.makeTranslation(f.a.x+dx*t,(f.height+.06)/2,f.a.y+dy*t);posts.setMatrixAt(j,m);}posts.computeBoundingSphere();world.add(posts);
+  }
+ }
 }
 
 // Converte as células de paredes em trechos contínuos, sem degraus nas diagonais.
@@ -273,6 +306,7 @@ function qDraw(now){
  for(const p of pavementAreas(qData)){g.fillStyle=/asfalto|rua|paviment/.test(p.material)?'#aab1b8':/grama/.test(p.material)?'#cce2b9':/terra/.test(p.material)?'#ddc8ad':'#e4e1da';g.fillRect(X(p.x),Y(p.y),p.w*scale,p.h*scale);}
  for(const c of normalizeCoverages(qData.coberturas||[])){g.fillStyle='#e5ebf1';g.beginPath();c.pontos.forEach((p,i)=>i?g.lineTo(X(p.x),Y(p.y)):g.moveTo(X(p.x),Y(p.y)));g.closePath();g.fill();}
  g.lineCap='round';g.lineJoin='round';
+ for(const f of fences)line(f.a,f.b,'#718078',Math.max(1,scale*.12));
  for(const p of architecture.pieces)line(p.a,p.b,'#354657',Math.max(1.2,p.width*scale));
  for(const p of architecture.joints){g.fillStyle='#354657';g.beginPath();g.arc(X(p.x),Y(p.y),Math.max(.7,p.r*scale),0,Math.PI*2);g.fill();}
  for(const d of architecture.doors)line({x:d.cx-d.ux*d.width/2,y:d.cy-d.uy*d.width/2},{x:d.cx+d.ux*d.width/2,y:d.cy+d.uy*d.width/2},'#b78b55',Math.max(1,scale*.12));
@@ -300,12 +334,12 @@ let returnTimer=0; const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f
 function results(){const terms=normalize($('search').value).trim().split(/\s+/);const list=$('results');list.replaceChildren();for(const [i,d] of (map?.dest||[]).entries()){if(!terms.every(t=>normalize(d.nome).includes(t)))continue;const b=document.createElement('button');b.textContent=d.nome;b.onclick=()=>{ qSelect(i); };list.append(b);}if(!list.children.length)list.textContent=map?'Nenhum destino encontrado.':'Carregando mapa…';}
 function consult(message=''){clearTimeout(returnTimer);route=[];$('navigation').hidden=true;$('consult').hidden=false;$('search').value='';$('feedback').textContent=message;results();}
 $('search').addEventListener('input',results);for(const row of ['QWERTYUIOP','ASDFGHJKL','ZXCVBNM','1234567890']){const line=document.createElement('div');line.className='keys';for(const c of row){const b=document.createElement('button');b.textContent=c;b.onclick=()=>{$('search').value+=c;results()};line.append(b)}$('keyboard').append(line)}for(const [id,action] of [['space',s=>s+' '],['backspace',s=>s.slice(0,-1)],['clear',()=> '']])$(id).onclick=()=>{$('search').value=action($('search').value);results()};
-function load(data){qData=data;if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const rawStart=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),rawDest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));if(data.rotas!==undefined&&!Array.isArray(data.rotas))throw Error('A camada rotas deve ser uma lista.');
+function load(data){qData=data;fences=readFences(data);if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const rawStart=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),rawDest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));if(data.rotas!==undefined&&!Array.isArray(data.rotas))throw Error('A camada rotas deve ser uma lista.');
  const coverages=normalizeCoverages(data.coberturas||[]);
  const routePoints=(data.rotas||[]).flatMap(r=>Array.isArray(r?.pontos)?r.pontos.map(p=>point(p||{})):[]);
- const all=[rawStart,...walls,...objects,...rawDest,...routePoints,...coverages.flatMap(c=>c.pontos),...(data.portas||[]).flatMap(d=>[{x:Number(d.x1),y:Number(d.y1)},{x:Number(d.x2),y:Number(d.y2)}]),...pavementAreas(data).flatMap(p=>[{x:p.x,y:p.y},{x:p.x+p.w,y:p.y+p.h}])];if(!all.every(valid))throw Error('Coordenadas x e y devem ser números finitos.');if(!walls.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)))throw Error('Coordenadas das paredes devem ser inteiras em x e y.');/* O editor salva posições contínuas; A* trabalha com células de 1 metro. */const start=cell(rawStart),dest=rawDest.map(p=>({...p,...cell(p)}));let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest,rawStart,rawDest,manualRoutes:data.rotas||[]};architecture=buildArchitecture(walls,data.portas||[]);blocked=new Set(objects.map(p=>key(Math.floor(p.x),Math.floor(p.y))));objectBlocked=new Set(blocked);for(const k of architecture.index.keys()){const [x,y]=k.split(',').map(Number);if(architectureHit(architecture,x+.5,y+.5))blocked.add(k);}scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();world.scale.setScalar(WORLD_SCALE);scene.add(world);drawPavements(data,{x:minX-2,y:minY-2,w:maxX-minX+5,h:maxY-minY+5});
+ const all=[...fences.flatMap(f=>[f.a,f.b]),rawStart,...walls,...objects,...rawDest,...routePoints,...coverages.flatMap(c=>c.pontos),...(data.portas||[]).flatMap(d=>[{x:Number(d.x1),y:Number(d.y1)},{x:Number(d.x2),y:Number(d.y2)}]),...pavementAreas(data).flatMap(p=>[{x:p.x,y:p.y},{x:p.x+p.w,y:p.y+p.h}])];if(!all.every(valid))throw Error('Coordenadas x e y devem ser números finitos.');if(!walls.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)))throw Error('Coordenadas das paredes devem ser inteiras em x e y.');/* O editor salva posições contínuas; A* trabalha com células de 1 metro. */const start=cell(rawStart),dest=rawDest.map(p=>({...p,...cell(p)}));let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest,rawStart,rawDest,manualRoutes:data.rotas||[]};architecture=buildArchitecture(walls,data.portas||[]);blocked=new Set(objects.map(p=>key(Math.floor(p.x),Math.floor(p.y))));objectBlocked=new Set(blocked);for(const k of architecture.index.keys()){const [x,y]=k.split(',').map(Number);if(architectureHit(architecture,x+.5,y+.5))blocked.add(k);}scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();world.scale.setScalar(WORLD_SCALE);scene.add(world);drawPavements(data,{x:minX-2,y:minY-2,w:maxX-minX+5,h:maxY-minY+5});
  addCoverages(coverages);
- drawArchitecture(architecture);const trees=objects.filter(p=>/arvore|árvore|tree/i.test(p.nome));addTrees(trees);instances(objects.filter(p=>!trees.includes(p)),new T.CylinderGeometry(.28,.38,1.8,6),mat(0x527445),.9);$('dest').replaceChildren(...dest.map((p,i)=>new Option(p.nome,i)));pos.set(start.x+.5,1.65,start.y+.5);angle=0;route=[];notice='Mapa carregado';consult();}
+ drawArchitecture(architecture);drawFences();const trees=objects.filter(p=>/arvore|árvore|tree/i.test(p.nome));addTrees(trees);instances(objects.filter(p=>!trees.includes(p)),new T.CylinderGeometry(.28,.38,1.8,6),mat(0x527445),.9);$('dest').replaceChildren(...dest.map((p,i)=>new Option(p.nome,i)));pos.set(start.x+.5,1.65,start.y+.5);angle=0;route=[];notice='Mapa carregado';consult();}
 // Rotas manuais usam metros contínuos, sem deslocamento de meia célula.
 function manualPath(destination,index){
  const definition=map.manualRoutes.find(r=>r&&r.destino===destination.nome&&
@@ -397,7 +431,7 @@ function clearance(x,y){
  return best;
 }
 function safePoint(x,z,r=.28){
- if(x-r<bounds.minX||x+r>bounds.maxX+1||z-r<bounds.minY||z+r>bounds.maxY+1||architectureHit(architecture,x,z,r))return false;
+ if(x-r<bounds.minX||x+r>bounds.maxX+1||z-r<bounds.minY||z+r>bounds.maxY+1||architectureHit(architecture,x,z,r)||fenceHit(x,z,r))return false;
  for(let j=Math.floor(z-r);j<=Math.floor(z+r);j++)for(let i=Math.floor(x-r);i<=Math.floor(x+r);i++){
   if(!objectBlocked.has(key(i,j)))continue;
   const dx=x-Math.max(i,Math.min(i+1,x)),dz=z-Math.max(j,Math.min(j+1,z));
