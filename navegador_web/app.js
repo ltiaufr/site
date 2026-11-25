@@ -232,9 +232,41 @@ $('go').onclick=()=>{
  }catch(error){route=[];$('feedback').textContent=error.message;}
 };$('stop').onclick=()=>consult(route.length?'Navegação interrompida.':'Destino alcançado. Selecione outro destino.');$('file').onchange=async e=>{try{load(JSON.parse(await e.target.files[0].text()))}catch(err){notice=err.message}};
 function resize(){const w=view.clientWidth,h=view.clientHeight;if(!w||!h)return;renderer.setPixelRatio(ratio);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(view);$('quality').onchange=()=>{ratio=$('quality').value==='high'?Math.min(devicePixelRatio,2):$('quality').value==='low'?.65:1;resize()};resize();
+// Velocidade em unidades do mapa por segundo; preserva escala, rotas e colisões.
+const NAV_MAX_SPEED=12;
+const NAV_ACCELERATION=8;
+const NAV_BRAKING=8;
+const NAV_CURVE_SPEED=2.5;
+function plannedSpeed(points,position){
+ let target=NAV_MAX_SPEED,travelled=0,a=position;
+ const horizon=NAV_MAX_SPEED*NAV_MAX_SPEED/(2*NAV_BRAKING)+8;
+ for(let i=0;i<points.length;i++){
+  const b=points[i],ab=a.distanceTo(b);
+  if(ab<1e-6)continue;
+  travelled+=ab;
+  if(travelled>horizon)return target;
+  let j=i+1;while(j<points.length&&b.distanceTo(points[j])<1e-6)j++;
+  if(j<points.length){
+   const c=points[j],bc=b.distanceTo(c),ac=a.distanceTo(c);
+   const ux=b.x-a.x,uz=b.z-a.z,vx=c.x-b.x,vz=c.z-b.z;
+   const cosine=(ux*vx+uz*vz)/(ab*bc);
+   const curvature=ac>1e-6?2*Math.abs(ux*vz-uz*vx)/(ab*bc*ac):Infinity;
+   // Curvas fechadas exigem redução mesmo quando os vértices estão distantes.
+   const limit=cosine<.85?NAV_CURVE_SPEED:
+    Math.min(NAV_MAX_SPEED,Math.max(NAV_CURVE_SPEED,Math.sqrt(3/Math.max(curvature,1e-9))));
+   target=Math.min(target,Math.sqrt(limit*limit+2*NAV_BRAKING*travelled));
+  }
+  a=b;
+ }
+ // Freia para chegar ao destino; o mínimo permite consumir o último trecho sem parar antes dele.
+ return Math.min(target,Math.max(.6,Math.sqrt(2*NAV_BRAKING*travelled)));
+}
+
 function tick(now){requestAnimationFrame(tick);const raw=(now-last)/1000;last=now;const dt=Math.min(raw,.05);if(route.length){
  // Consome toda a distância do quadro, inclusive em curvas subdivididas.
- navSpeed=Math.min(3,navSpeed+dt*5);
+ const targetSpeed=plannedSpeed(route,pos);
+ navSpeed=targetSpeed>navSpeed?Math.min(targetSpeed,navSpeed+dt*NAV_ACCELERATION):
+  Math.max(targetSpeed,navSpeed-dt*NAV_BRAKING);
  let budget=dt*navSpeed;
  while(route.length&&budget>0){
   const delta=route[0].clone().sub(pos),dist=delta.length();
@@ -242,7 +274,7 @@ function tick(now){requestAnimationFrame(tick);const raw=(now-last)/1000;last=no
   else{pos.addScaledVector(delta,budget/dist);budget=0;}
  }
  if(route.length){
-  let look=pos.clone(),remaining=1.15;
+  let look=pos.clone(),remaining=Math.max(1.15,navSpeed*.45);
   for(const p of route){const dist=look.distanceTo(p);if(dist>=remaining){look.lerp(p,remaining/Math.max(dist,1e-9));break;}look.copy(p);remaining-=dist;}
   const delta=look.sub(pos);
   if(delta.lengthSq()>1e-8){const desired=Math.atan2(delta.x,delta.z),diff=Math.atan2(Math.sin(desired-angle),Math.cos(desired-angle));angle+=diff*(1-Math.exp(-dt*4.5));}
