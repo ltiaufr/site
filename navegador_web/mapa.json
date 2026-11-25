@@ -36004,11 +36004,6 @@
   ],
   "destinos" : [
     {
-      "nome" : "Auditorio",
-      "x" : 4.4516483740376469E+002,
-      "y" : 7.4560005163784217E+002
-    },
-    {
       "nome" : "Predio Administrativo",
       "x" : 4.1096065838306259E+002,
       "y" : 8.5357294511364057E+002
@@ -36077,6 +36072,11 @@
       "nome" : "NUPEC",
       "x" : 1.3880860863946992E+002,
       "y" : 6.3504047964265726E+002
+    },
+    {
+      "nome" : "Auditorio",
+      "x" : 4.4130008659117698E+002,
+      "y" : 7.3573427240742296E+002
     }
   ],
   "coberturas" : [
@@ -36446,30 +36446,8 @@
   ],
   "rotas" : [
     {
-      "destino" : "Auditorio",
-      "destino_indice" : 0,
-      "pontos" : [
-        {
-          "x" : 5.3197555917278964E+002,
-          "y" : 8.3722026769158140E+002
-        },
-        {
-          "x" : 4.7022314226504176E+002,
-          "y" : 7.9921878036373653E+002
-        },
-        {
-          "x" : 4.4177944862155391E+002,
-          "y" : 7.7736340852130320E+002
-        },
-        {
-          "x" : 4.4516483740376469E+002,
-          "y" : 7.4560005163784217E+002
-        }
-      ]
-    },
-    {
       "destino" : "Predio Administrativo",
-      "destino_indice" : 1,
+      "destino_indice" : 0,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36487,7 +36465,7 @@
     },
     {
       "destino" : "Bloco E (Didático)",
-      "destino_indice" : 2,
+      "destino_indice" : 1,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36509,7 +36487,7 @@
     },
     {
       "destino" : "Biblioteca",
-      "destino_indice" : 3,
+      "destino_indice" : 2,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36535,7 +36513,7 @@
     },
     {
       "destino" : "Laboratorio de Climatologia",
-      "destino_indice" : 4,
+      "destino_indice" : 3,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36565,7 +36543,7 @@
     },
     {
       "destino" : "NEATI",
-      "destino_indice" : 7,
+      "destino_indice" : 6,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36599,7 +36577,7 @@
     },
     {
       "destino" : "Galpão Zootecnia",
-      "destino_indice" : 6,
+      "destino_indice" : 5,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36625,7 +36603,7 @@
     },
     {
       "destino" : "Centro de Vivencia - Estudantes",
-      "destino_indice" : 5,
+      "destino_indice" : 4,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36659,7 +36637,7 @@
     },
     {
       "destino" : "Galpão EAA",
-      "destino_indice" : 9,
+      "destino_indice" : 8,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36693,7 +36671,7 @@
     },
     {
       "destino" : "Bloco F - Medicina",
-      "destino_indice" : 12,
+      "destino_indice" : 11,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36719,7 +36697,7 @@
     },
     {
       "destino" : "Bloco D - Enfermagem",
-      "destino_indice" : 11,
+      "destino_indice" : 10,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36757,7 +36735,7 @@
     },
     {
       "destino" : "Bloco B - Psicologia",
-      "destino_indice" : 13,
+      "destino_indice" : 12,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36787,7 +36765,7 @@
     },
     {
       "destino" : "STI",
-      "destino_indice" : 10,
+      "destino_indice" : 9,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36813,7 +36791,7 @@
     },
     {
       "destino" : "RU",
-      "destino_indice" : 8,
+      "destino_indice" : 7,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36843,7 +36821,7 @@
     },
     {
       "destino" : "NUPEC",
-      "destino_indice" : 14,
+      "destino_indice" : 13,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -36872,6 +36850,32 @@
         {
           "x" : 1.3880860863946992E+002,
           "y" : 6.3504047964265726E+002
+        }
+      ]
+    },
+    {
+      "destino" : "Auditorio",
+      "destino_indice" : 14,
+      "pontos" : [
+        {
+          "x" : 5.3197555917278964E+002,
+          "y" : 8.3722026769158140E+002
+        },
+        {
+          "x" : 5.3313089619356708E+002,
+          "y" : 7.9973466440131028E+002
+        },
+        {
+          "x" : 4.4029781889810744E+002,
+          "y" : 7.9737164061560770E+002
+        },
+        {
+          "x" : 4.4183245506394530E+002,
+          "y" : 7.4037785190762906E+002
+        },
+        {
+          "x" : 4.4130008659117698E+002,
+          "y" : 7.3573427240742296E+002
         }
       ]
     }
