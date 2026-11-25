@@ -1,6 +1,6 @@
 import * as T from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 const $=id=>document.getElementById(id), view=$('view'), status=$('status');
-let renderer; try{renderer=new T.WebGLRenderer({antialias:false,powerPreference:'low-power'});}catch(e){status.textContent='WebGL 2 indisponível neste dispositivo.';throw e;}
+let renderer; try{renderer=new T.WebGLRenderer({antialias:true,powerPreference:'low-power'});}catch(e){status.textContent='WebGL 2 indisponível neste dispositivo.';throw e;}
 view.append(renderer.domElement);const scene=new T.Scene();scene.background=new T.Color(0xaec9dc);scene.fog=new T.Fog(0xaec9dc,45,110);// Ajustes globais da câmera (distâncias em unidades do mapa, ângulos em graus).
 const CEILING_HEIGHT=2.8;
 const CAMERA_HEIGHT=1.65;
@@ -8,7 +8,7 @@ const CAMERA_DISTANCE=1.5;
 const CAMERA_PITCH=2;
 const CAMERA_FOV=75;
 const camera=new T.PerspectiveCamera(CAMERA_FOV,1,.1,120);let world=new T.Group();scene.add(world);scene.add(new T.HemisphereLight(0xffffff,0x777777,2));const light=new T.DirectionalLight(0xffffff,1.3);light.position.set(10,20,5);scene.add(light);
-let map,blocked,bounds,route=[],pos=new T.Vector3(),angle=0,ratio=1,frames=0,elapsed=0,fps=0,notice='',last=performance.now();const key=(x,y)=>x+','+y;const point=p=>({x:Number(p.x),y:Number(p.y)});const valid=p=>Number.isFinite(p.x)&&Number.isFinite(p.y);const cell=p=>({x:Math.floor(p.x),y:Math.floor(p.y)});const mat=color=>new T.MeshLambertMaterial({color});
+let map,blocked,objectBlocked,bounds,route=[],pos=new T.Vector3(),angle=0,ratio=1,frames=0,elapsed=0,fps=0,notice='',last=performance.now();const key=(x,y)=>x+','+y;const point=p=>({x:Number(p.x),y:Number(p.y)});const valid=p=>Number.isFinite(p.x)&&Number.isFinite(p.y);const cell=p=>({x:Math.floor(p.x),y:Math.floor(p.y)});const mat=color=>new T.MeshLambertMaterial({color});
 
 function pattern(brick){
  const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');
@@ -55,6 +55,199 @@ function addTrees(items){
  for(const p of items){const s=new T.Sprite(material);s.center.set(.5,0);s.scale.set(3.5,3.5,1);s.position.set(p.x+.5,0,p.y+.5);world.add(s);}
 }
 
+// Converte as células de paredes em trechos contínuos, sem degraus nas diagonais.
+let architecture=null,doorViews=[],roadAreas=[];
+const WALL_THICKNESS=.20,ROAD_DROP=.15;
+function pointSegment(p,a,b){const dx=b.x-a.x,dy=b.y-a.y,den=dx*dx+dy*dy,t=den?Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/den)):0;return Math.hypot(p.x-a.x-dx*t,p.y-a.y-dy*t);}
+function simplifyWall(points,tolerance=.8){
+ if(points.length<3)return points;
+ // Um alinhamento rasterizado oscila ao redor de uma única reta; reconhece-o antes de simplificar os cantos.
+ const mx=points.reduce((v,p)=>v+p.x,0)/points.length,my=points.reduce((v,p)=>v+p.y,0)/points.length;
+ let xx=0,xy=0,yy=0;
+ for(const p of points){xx+=(p.x-mx)**2;xy+=(p.x-mx)*(p.y-my);yy+=(p.y-my)**2;}
+ const angle=.5*Math.atan2(2*xy,xx-yy);let ux=Math.cos(angle),uy=Math.sin(angle);
+ if((points.at(-1).x-points[0].x)*ux+(points.at(-1).y-points[0].y)*uy<0){ux=-ux;uy=-uy;}
+ let previous=-Infinity,straight=true;
+ for(const p of points){const projection=(p.x-mx)*ux+(p.y-my)*uy;if(projection<previous-1e-6||Math.abs(-(p.x-mx)*uy+(p.y-my)*ux)>.52){straight=false;break;}previous=projection;}
+ if(straight)return [points[0],points.at(-1)];
+ let best=0,index=0;
+ for(let i=1;i<points.length-1;i++){const d=pointSegment(points[i],points[0],points.at(-1));if(d>best){best=d;index=i;}}
+ if(best<=tolerance)return [points[0],points.at(-1)];
+ return [...simplifyWall(points.slice(0,index+1),tolerance).slice(0,-1),...simplifyWall(points.slice(index),tolerance)];
+}
+function wallLines(cells){
+ const nodes=new Map(cells.map(p=>[key(p.x,p.y),{x:p.x+.5,y:p.y+.5,ix:p.x,iy:p.y,next:[]}]));
+ for(const n of nodes.values())for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+  if(!dx&&!dy)continue;
+  const other=nodes.get(key(n.ix+dx,n.iy+dy));if(!other)continue;
+  if(dx&&dy&&(nodes.has(key(n.ix+dx,n.iy))||nodes.has(key(n.ix,n.iy+dy))))continue;
+  n.next.push(other);
+ }
+ const visited=new Set(),lines=[],isolated=[];
+ const edge=(a,b)=>[key(a.ix,a.iy),key(b.ix,b.iy)].sort().join('|');
+ const trace=(start,next)=>{
+  const chain=[start];let prev=start,current=next;visited.add(edge(prev,current));
+  while(true){chain.push(current);if(current===start||current.next.length!==2)break;
+   const dest=current.next.find(n=>n!==prev);if(visited.has(edge(current,dest)))break;
+   visited.add(edge(current,dest));prev=current;current=dest;
+  }
+  let reduced;
+  if(chain.at(-1)===start){
+   const ring=chain.slice(0,-1);let far=1;
+   for(let i=2;i<ring.length;i++)if(Math.hypot(ring[i].x-start.x,ring[i].y-start.y)>Math.hypot(ring[far].x-start.x,ring[far].y-start.y))far=i;
+   reduced=[...simplifyWall(ring.slice(0,far+1)).slice(0,-1),...simplifyWall([...ring.slice(far),start])];
+  }else reduced=simplifyWall(chain);
+  for(let i=1;i<reduced.length;i++)lines.push({a:{x:reduced[i-1].x,y:reduced[i-1].y},b:{x:reduced[i].x,y:reduced[i].y}});
+ };
+ for(const n of nodes.values()){
+  if(!n.next.length)isolated.push(n);
+  if(n.next.length!==2)for(const other of n.next)if(!visited.has(edge(n,other)))trace(n,other);
+ }
+ for(const n of nodes.values())for(const other of n.next)if(!visited.has(edge(n,other)))trace(n,other);
+ return {lines,isolated};
+}
+function buildArchitecture(cells,definitions){
+ const {lines,isolated}=wallLines(cells),pieces=[],lintels=[],doors=[],joints=[];
+ const cuts=lines.map(()=>[]);
+ for(const d of definitions||[]){
+  const a={x:Number(d.x1),y:Number(d.y1)},b={x:Number(d.x2),y:Number(d.y2)};
+  const sourceWidth=Math.hypot(b.x-a.x,b.y-a.y),width=Number(d.largura??sourceWidth),height=Number(d.altura??2.1);
+  if(!valid(a)||!valid(b)||sourceWidth<.1||!Number.isFinite(width)||width<.4||width>6||!Number.isFinite(height)||height<=0||height>CEILING_HEIGHT)throw Error('Medidas inválidas na porta '+(d.id||''));
+  const mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};let chosen=-1,best=Infinity;
+  for(let i=0;i<lines.length;i++){
+   const l=lines[i],dx=l.b.x-l.a.x,dy=l.b.y-l.a.y,len=Math.hypot(dx,dy),parallel=Math.abs(((b.x-a.x)*dx+(b.y-a.y)*dy)/(sourceWidth*len));
+   if(len<width+.16)continue;
+   const distance=pointSegment(mid,l.a,l.b);
+   if(parallel>.7&&distance<1.6&&distance<best){chosen=i;best=distance;}
+  }
+  let cx=mid.x,cy=mid.y,ux=(b.x-a.x)/sourceWidth,uy=(b.y-a.y)/sourceWidth;
+  if(chosen>=0){
+   const l=lines[chosen],len=Math.hypot(l.b.x-l.a.x,l.b.y-l.a.y);ux=(l.b.x-l.a.x)/len;uy=(l.b.y-l.a.y)/len;
+   const t=Math.max(width/2,Math.min(len-width/2,(mid.x-l.a.x)*ux+(mid.y-l.a.y)*uy));
+   cx=l.a.x+ux*t;cy=l.a.y+uy*t;
+   cuts[chosen].push({lo:Math.max(0,t-width/2),hi:Math.min(len,t+width/2),height});
+  }
+  doors.push({id:d.id||'',cx,cy,ux,uy,width,height,leaves:Number(d.folhas??(width>=1.5?2:1))===2?2:1,matched:chosen>=0});
+ }
+ const segment=(line,lo,hi)=>{
+  const len=Math.hypot(line.b.x-line.a.x,line.b.y-line.a.y),ux=(line.b.x-line.a.x)/len,uy=(line.b.y-line.a.y)/len;
+  return {a:{x:line.a.x+ux*lo,y:line.a.y+uy*lo},b:{x:line.a.x+ux*hi,y:line.a.y+uy*hi},width:WALL_THICKNESS};
+ };
+ for(let i=0;i<lines.length;i++){
+  const l=lines[i],len=Math.hypot(l.b.x-l.a.x,l.b.y-l.a.y),breaks=[0,len,...cuts[i].flatMap(c=>[c.lo,c.hi])].sort((a,b)=>a-b);
+  for(let j=1;j<breaks.length;j++){
+   const lo=breaks[j-1],hi=breaks[j];if(hi-lo<1e-6)continue;
+   const opening=cuts[i].filter(c=>c.lo<(lo+hi)/2&&c.hi>(lo+hi)/2);
+   if(opening.length){const bottom=Math.max(...opening.map(c=>c.height));if(bottom<CEILING_HEIGHT)lintels.push({...segment(l,lo,hi),bottom,height:CEILING_HEIGHT-bottom});}
+   else pieces.push({...segment(l,lo,hi),bottom:0,height:CEILING_HEIGHT});
+  }
+ }
+ const unique=new Set();
+ for(const p of [...lines.flatMap(l=>[l.a,l.b]),...isolated]){
+  const k=key(p.x,p.y);if(unique.has(k))continue;unique.add(k);
+  if(doors.some(d=>Math.abs((p.x-d.cx)*d.ux+(p.y-d.cy)*d.uy)<d.width/2+.5&&Math.abs(-(p.x-d.cx)*d.uy+(p.y-d.cy)*d.ux)<1))continue;
+  joints.push({x:p.x,y:p.y,r:WALL_THICKNESS/2});
+ }
+ const index=new Map();
+ const register=(shape,x1,y1,x2,y2)=>{for(let y=Math.floor(y1-.9);y<=Math.floor(y2+.9);y++)for(let x=Math.floor(x1-.9);x<=Math.floor(x2+.9);x++){const k=key(x,y);if(!index.has(k))index.set(k,[]);index.get(k).push(shape);}};
+ for(const s of pieces)register(s,Math.min(s.a.x,s.b.x),Math.min(s.a.y,s.b.y),Math.max(s.a.x,s.b.x),Math.max(s.a.y,s.b.y));
+ for(const s of joints)register(s,s.x,s.y,s.x,s.y);
+ return {pieces,lintels,joints,doors,index,lines};
+}
+function architectureHit(model,x,y,r=0){
+ if(!model)return false;
+ for(const s of model.index.get(key(Math.floor(x),Math.floor(y)))||[]){
+  if(s.r!==undefined){if(Math.hypot(x-s.x,y-s.y)<=s.r+r)return true;continue;}
+  const dx=s.b.x-s.a.x,dy=s.b.y-s.a.y,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len;
+  const t=(x-s.a.x)*ux+(y-s.a.y)*uy,n=-(x-s.a.x)*uy+(y-s.a.y)*ux;
+  if(Math.hypot(Math.max(-t,t-len,0),Math.max(Math.abs(n)-s.width/2,0))<=r)return true;
+ }
+ return false;
+}
+function drawArchitecture(model){
+ for(const s of [...model.pieces,...model.lintels]){
+  const len=Math.hypot(s.b.x-s.a.x,s.b.y-s.a.y),geo=new T.BoxGeometry(len,s.height,s.width),uv=geo.attributes.uv;
+  for(let i=0;i<uv.count;i++){uv.setX(i,uv.getX(i)*len);uv.setY(i,uv.getY(i)*s.height);}
+  const mesh=new T.Mesh(geo,wallMaterial());mesh.position.set((s.a.x+s.b.x)/2,s.bottom+s.height/2,(s.a.y+s.b.y)/2);
+  mesh.rotation.y=-Math.atan2(s.b.y-s.a.y,s.b.x-s.a.x);mesh.userData.parede=true;world.add(mesh);
+ }
+ for(const p of model.joints){const mesh=new T.Mesh(new T.CylinderGeometry(p.r,p.r,CEILING_HEIGHT,8),wallMaterial());mesh.position.set(p.x,CEILING_HEIGHT/2,p.y);world.add(mesh);}
+ doorViews=[];
+ for(const d of model.doors){
+  const group=new T.Group();group.position.set(d.cx-d.ux*d.width/2,0,d.cy-d.uy*d.width/2);group.rotation.y=-Math.atan2(d.uy,d.ux);
+  const frameMaterial=new T.MeshLambertMaterial({color:0x626a6e}),leafMaterial=new T.MeshLambertMaterial({color:d.leaves===2?0x486a50:0x956b42,side:T.DoubleSide});
+  const box=(w,h,depth,x,y,z,material,parent=group)=>{const m=new T.Mesh(new T.BoxGeometry(w,h,depth),material);m.position.set(x,y,z);parent.add(m);return m;};
+  for(const x of [-.04,d.width+.04])box(.08,d.height+.08,WALL_THICKNESS+.04,x,(d.height+.08)/2,0,frameMaterial);
+  box(d.width+.16,.08,WALL_THICKNESS+.04,d.width/2,d.height+.04,0,frameMaterial);
+  const hinges=[];
+  for(let i=0;i<d.leaves;i++){
+   const width=d.width/d.leaves,hinge=new T.Group(),sign=i===1?-1:1;
+   hinge.position.x=i===1?d.width:0;group.add(hinge);
+   box(width-.025,d.height-.025,.06,sign*width/2,d.height/2,0,leafMaterial,hinge);
+   // Maçanetas ou barras de saída nas duas faces: visíveis por dentro e por fora.
+   for(const side of [-1,1])box(d.leaves===2?width*.7:.045,.035,.035,sign*(d.leaves===2?width/2:width-.12),1.05,side*.055,frameMaterial,hinge);
+   hinges.push({hinge,sign});
+  }
+  group.userData.porta=d;world.add(group);doorViews.push({...d,group,hinges,angle:0,side:1});
+ }
+}
+function animateDoors(dt){
+ for(const d of doorViews){
+  const distance=Math.hypot(pos.x-d.cx,pos.z-d.cy),near=route.length>0&&distance<7;
+  if(near&&d.angle<.01)d.side=(-(pos.x-d.cx)*d.uy+(pos.z-d.cy)*d.ux)>=0?1:-1;
+  const target=near?Math.PI/2:0;d.angle+=(target-d.angle)*(1-Math.exp(-dt*12));
+  for(const h of d.hinges)h.hinge.rotation.y=h.sign*d.side*d.angle;
+ }
+}
+
+let surfaceAreas=[];
+function pavementAreas(data){
+ return (data.pisos||[]).map(p=>({x:Number(p.x),y:Number(p.y),w:Number(p.largura),h:Number(p.altura),material:String(p.material||'concreto').toLowerCase()})).filter(p=>[p.x,p.y,p.w,p.h].every(Number.isFinite)&&p.w>0&&p.h>0);
+}
+function subtractRectangle(rect,cut){
+ const x=Math.max(rect.x,cut.x),y=Math.max(rect.y,cut.y),right=Math.min(rect.x+rect.w,cut.x+cut.w),bottom=Math.min(rect.y+rect.h,cut.y+cut.h);
+ if(right<=x||bottom<=y)return [rect];
+ return [{x:rect.x,y:rect.y,w:rect.w,h:y-rect.y},{x:rect.x,y:bottom,w:rect.w,h:rect.y+rect.h-bottom},{x:rect.x,y,w:x-rect.x,h:bottom-y},{x:right,y,w:rect.x+rect.w-right,h:bottom-y}].filter(r=>r.w>1e-6&&r.h>1e-6);
+}
+function floorElevation(x,y){for(let i=surfaceAreas.length-1;i>=0;i--){const r=surfaceAreas[i];if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h)return /asfalto|rua|paviment/.test(r.material)?-ROAD_DROP:0;}return 0;}
+function drawPavements(data,rect){
+ const areas=pavementAreas(data);surfaceAreas=areas;roadAreas=areas.filter(p=>/asfalto|rua|paviment/.test(p.material));
+ const plane=(r,height,color,texture=floorTexture)=>{
+  const geo=new T.PlaneGeometry(r.w,r.h),uv=geo.attributes.uv;
+  for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*r.w/2,uv.getY(i)*r.h/2);
+  const mesh=new T.Mesh(geo,new T.MeshLambertMaterial({map:texture,color}));mesh.rotation.x=-Math.PI/2;mesh.position.set(r.x+r.w/2,height,r.y+r.h/2);mesh.userData.piso=true;world.add(mesh);return mesh;
+ };
+ // O piso superior é recortado: a rua rebaixada não fica escondida por um plano em y=0.
+ let pieces=[rect];for(const road of roadAreas)pieces=pieces.flatMap(r=>subtractRectangle(r,road));
+ plane(rect,-ROAD_DROP-.005,0x575b5d);
+ for(const p of pieces)plane(p,0,0xffffff);
+ for(const p of areas)plane(p,/asfalto|rua|paviment/.test(p.material)?-ROAD_DROP:.003,
+  /asfalto|rua|paviment/.test(p.material)?0x30363b:/grama/.test(p.material)?0x69914f:/terra/.test(p.material)?0xa2835c:0xd2d1c7);
+ // Faces verticais de 15 cm somente nas bordas expostas da união das ruas.
+ const inside=(x,y)=>roadAreas.some(r=>x>r.x&&x<r.x+r.w&&y>r.y&&y<r.y+r.h);
+ for(const r of roadAreas){
+  const edges=[{a:{x:r.x,y:r.y},b:{x:r.x+r.w,y:r.y}},{a:{x:r.x+r.w,y:r.y},b:{x:r.x+r.w,y:r.y+r.h}},{a:{x:r.x+r.w,y:r.y+r.h},b:{x:r.x,y:r.y+r.h}},{a:{x:r.x,y:r.y+r.h},b:{x:r.x,y:r.y}}];
+  for(const edge of edges){
+   const dx=edge.b.x-edge.a.x,dy=edge.b.y-edge.a.y,length=Math.hypot(dx,dy),ux=dx/length,uy=dy/length;
+   let intervals=[{lo:0,hi:length}];
+   for(const other of roadAreas){if(other===r)continue;
+    const horizontal=Math.abs(uy)<.5,constant=horizontal?edge.a.y:edge.a.x;
+    const min=horizontal?other.y:other.x,max=min+(horizontal?other.h:other.w);
+    if(constant<min-1e-6||constant>max+1e-6)continue;
+    const start=horizontal?other.x:other.y,end=start+(horizontal?other.w:other.h);
+    const base=horizontal?edge.a.x:edge.a.y,dir=horizontal?ux:uy;
+    const lo=Math.min((start-base)/dir,(end-base)/dir),hi=Math.max((start-base)/dir,(end-base)/dir);
+    // Remove a parte em contato com outra rua, inclusive bordas coincidentes.
+    intervals=intervals.flatMap(v=>hi<=v.lo||lo>=v.hi?[v]:[{lo:v.lo,hi:Math.min(v.hi,lo)},{lo:Math.max(v.lo,hi),hi:v.hi}].filter(q=>q.hi-q.lo>1e-6));
+   }
+   for(const v of intervals){const t=(v.lo+v.hi)/2,cx=edge.a.x+ux*t,cy=edge.a.y+uy*t;
+    if(inside(cx+uy*.01,cy-ux*.01))continue;
+    const mesh=new T.Mesh(new T.BoxGeometry(v.hi-v.lo,ROAD_DROP,.015),mat(0xa4a5a1));mesh.position.set(cx,-ROAD_DROP/2,cy);mesh.rotation.y=-Math.atan2(uy,ux);world.add(mesh);
+   }
+  }
+ }
+}
+
 let returnTimer=0; const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 function results(){const terms=normalize($('search').value).trim().split(/\s+/);const list=$('results');list.replaceChildren();for(const [i,d] of (map?.dest||[]).entries()){if(!terms.every(t=>normalize(d.nome).includes(t)))continue;const b=document.createElement('button');b.textContent=d.nome;b.onclick=()=>{ $('dest').value=i; $('go').click(); };list.append(b);}if(!list.children.length)list.textContent=map?'Nenhum destino encontrado.':'Carregando mapa…';}
 function consult(message=''){clearTimeout(returnTimer);route=[];$('navigation').hidden=true;$('consult').hidden=false;$('search').value='';$('feedback').textContent=message;results();}
@@ -62,9 +255,9 @@ $('search').addEventListener('input',results);for(const row of ['QWERTYUIOP','AS
 function load(data){if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const rawStart=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),rawDest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));if(data.rotas!==undefined&&!Array.isArray(data.rotas))throw Error('A camada rotas deve ser uma lista.');
  const coverages=normalizeCoverages(data.coberturas||[]);
  const routePoints=(data.rotas||[]).flatMap(r=>Array.isArray(r?.pontos)?r.pontos.map(p=>point(p||{})):[]);
- const all=[rawStart,...walls,...objects,...rawDest,...routePoints,...coverages.flatMap(c=>c.pontos)];if(!all.every(valid))throw Error('Coordenadas x e y devem ser números finitos.');if(!walls.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)))throw Error('Coordenadas das paredes devem ser inteiras em x e y.');/* O editor salva posições contínuas; A* trabalha com células de 1 metro. */const start=cell(rawStart),dest=rawDest.map(p=>({...p,...cell(p)}));let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest,rawStart,rawDest,manualRoutes:data.rotas||[]};blocked=new Set([...walls,...objects].map(p=>key(Math.floor(p.x),Math.floor(p.y))));scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();scene.add(world);floorTexture.repeat.set((maxX-minX+5)/2,(maxY-minY+5)/2);const floor=new T.Mesh(new T.PlaneGeometry(maxX-minX+5,maxY-minY+5),new T.MeshLambertMaterial({map:floorTexture}));floor.rotation.x=-Math.PI/2;floor.position.set((minX+maxX+1)/2,0,(minY+maxY+1)/2);world.add(floor);
+ const all=[rawStart,...walls,...objects,...rawDest,...routePoints,...coverages.flatMap(c=>c.pontos),...(data.portas||[]).flatMap(d=>[{x:Number(d.x1),y:Number(d.y1)},{x:Number(d.x2),y:Number(d.y2)}]),...pavementAreas(data).flatMap(p=>[{x:p.x,y:p.y},{x:p.x+p.w,y:p.y+p.h}])];if(!all.every(valid))throw Error('Coordenadas x e y devem ser números finitos.');if(!walls.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)))throw Error('Coordenadas das paredes devem ser inteiras em x e y.');/* O editor salva posições contínuas; A* trabalha com células de 1 metro. */const start=cell(rawStart),dest=rawDest.map(p=>({...p,...cell(p)}));let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest,rawStart,rawDest,manualRoutes:data.rotas||[]};architecture=buildArchitecture(walls,data.portas||[]);blocked=new Set(objects.map(p=>key(Math.floor(p.x),Math.floor(p.y))));objectBlocked=new Set(blocked);for(const k of architecture.index.keys()){const [x,y]=k.split(',').map(Number);if(architectureHit(architecture,x+.5,y+.5))blocked.add(k);}scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();scene.add(world);drawPavements(data,{x:minX-2,y:minY-2,w:maxX-minX+5,h:maxY-minY+5});
  addCoverages(coverages);
- const groups=new Map();for(const p of walls){const k=key(Math.floor(p.x/16),Math.floor(p.y/16));if(!groups.has(k))groups.set(k,[]);groups.get(k).push(p)}for(const g of groups.values())instances(g,wallGeometry(),wallMaterial(),1.4);const trees=objects.filter(p=>/arvore|árvore|tree/i.test(p.nome));addTrees(trees);instances(objects.filter(p=>!trees.includes(p)),new T.CylinderGeometry(.28,.38,1.8,6),mat(0x527445),.9);$('dest').replaceChildren(...dest.map((p,i)=>new Option(p.nome,i)));pos.set(start.x+.5,1.65,start.y+.5);angle=0;route=[];notice='Mapa carregado';consult();}
+ drawArchitecture(architecture);const trees=objects.filter(p=>/arvore|árvore|tree/i.test(p.nome));addTrees(trees);instances(objects.filter(p=>!trees.includes(p)),new T.CylinderGeometry(.28,.38,1.8,6),mat(0x527445),.9);$('dest').replaceChildren(...dest.map((p,i)=>new Option(p.nome,i)));pos.set(start.x+.5,1.65,start.y+.5);angle=0;route=[];notice='Mapa carregado';consult();}
 // Rotas manuais usam metros contínuos, sem deslocamento de meia célula.
 function manualPath(destination,index){
  const definition=map.manualRoutes.find(r=>r&&r.destino===destination.nome&&
@@ -156,8 +349,9 @@ function clearance(x,y){
  return best;
 }
 function safePoint(x,z,r=.28){
+ if(x-r<bounds.minX||x+r>bounds.maxX+1||z-r<bounds.minY||z+r>bounds.maxY+1||architectureHit(architecture,x,z,r))return false;
  for(let j=Math.floor(z-r);j<=Math.floor(z+r);j++)for(let i=Math.floor(x-r);i<=Math.floor(x+r);i++){
-  if(free(i,j))continue;
+  if(!objectBlocked.has(key(i,j)))continue;
   const dx=x-Math.max(i,Math.min(i+1,x)),dz=z-Math.max(j,Math.min(j+1,z));
   if(dx*dx+dz*dz<=r*r)return false;
  }
@@ -192,7 +386,7 @@ function smoothPath(raw){
  out.push(simplified[simplified.length-1]);return out;
 }
 function path(s,d){
- if(!free(s.x,s.y)||!free(d.x,d.y))return [];
+ if(!free(s.x,s.y)||!free(d.x,d.y)||!safePoint(s.x+.5,s.y+.5,.32)||!safePoint(d.x+.5,d.y+.5,.32))return [];
  const target=key(d.x,d.y),start=key(s.x,s.y),prev=new Map([[start,null]]),cost=new Map([[start,0]]),heap=[];
  const push=v=>{let i=heap.length;heap.push(v);while(i){const j=(i-1)>>1;if(heap[j].f<=v.f)break;heap[i]=heap[j];i=j;}heap[i]=v;};
  const pop=()=>{const top=heap[0],v=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let j=i*2+1;if(j+1<heap.length&&heap[j+1].f<heap[j].f)j++;if(heap[j].f>=v.f)break;heap[i]=heap[j];i=j;}heap[i]=v;}return top;};
@@ -206,7 +400,7 @@ function path(s,d){
   const p=pop(),k=key(p.x,p.y);if(p.g!==cost.get(k))continue;
   if(k===target){const raw=[];let cur=p;while(cur){raw.push(new T.Vector3(cur.x+.5,1.65,cur.y+.5));cur=prev.get(key(cur.x,cur.y));}return smoothPath(raw.reverse());}
   for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
-   const x=p.x+dx,y=p.y+dy,n=key(x,y);if(!free(x,y))continue;
+   const x=p.x+dx,y=p.y+dy,n=key(x,y);if(!free(x,y)||!safeSegment(new T.Vector3(p.x+.5,1.65,p.y+.5),new T.Vector3(x+.5,1.65,y+.5)))continue;
    const g=p.g+1+2.4*Math.max(0,2-cachedClearance(x,y))**2;
    if(g>=(cost.get(n)??Infinity))continue;
    cost.set(n,g);prev.set(n,p);push({x,y,g,f:g+h(x,y)});
@@ -214,7 +408,7 @@ function path(s,d){
  }
  return [];
 }
-let cameraBack=CAMERA_DISTANCE,navSpeed=0;
+let cameraBack=CAMERA_DISTANCE,navSpeed=0,cameraGround=0;
 $('go').onclick=()=>{
  if(!map)return;
  const index=Number($('dest').value),d=map.dest[index];if(!d)return;
@@ -223,7 +417,7 @@ $('go').onclick=()=>{
   const manual=manualPath(d,index);
   route=manual===null?path(map.start,d):manual;
   if(!route.length){$('feedback').textContent='Rota não encontrada para '+d.nome;return;}
-  pos.copy(route[0]);
+  pos.copy(route[0]);cameraGround=floorElevation(pos.x,pos.z);
   const next=route.find(p=>p.distanceTo(pos)>1e-6);
   angle=next?Math.atan2(next.x-pos.x,next.z-pos.z):0;
   notice='Navegando para '+d.nome;
@@ -239,6 +433,7 @@ const NAV_BRAKING=8;
 const NAV_CURVE_SPEED=2.5;
 function plannedSpeed(points,position){
  let target=NAV_MAX_SPEED,travelled=0,a=position;
+ for(const door of doorViews){const distance=Math.hypot(position.x-door.cx,position.z-door.cy);if(distance<9)target=Math.min(target,Math.sqrt(2.5*2.5+2*NAV_BRAKING*Math.max(0,distance-2)));}
  const horizon=NAV_MAX_SPEED*NAV_MAX_SPEED/(2*NAV_BRAKING)+8;
  for(let i=0;i<points.length;i++){
   const b=points[i],ab=a.distanceTo(b);
@@ -279,11 +474,11 @@ function tick(now){requestAnimationFrame(tick);const raw=(now-last)/1000;last=no
   const delta=look.sub(pos);
   if(delta.lengthSq()>1e-8){const desired=Math.atan2(delta.x,delta.z),diff=Math.atan2(Math.sin(desired-angle),Math.cos(desired-angle));angle+=diff*(1-Math.exp(-dt*4.5));}
  }else{notice='Destino alcançado';status.textContent=notice;navSpeed=0;}
-}const fx=Math.sin(angle),fz=Math.cos(angle);let back=CAMERA_DISTANCE;
+}animateDoors(dt);cameraGround+=(floorElevation(pos.x,pos.z)-cameraGround)*(1-Math.exp(-dt*8));const fx=Math.sin(angle),fz=Math.cos(angle);let back=CAMERA_DISTANCE;
 // Evita recuar a câmera para dentro de paredes ou objetos.
 for(let d=.1;d<=CAMERA_DISTANCE+.1;d+=.1){if(blocked&&!safePoint(pos.x-fx*d,pos.z-fz*d,.22)){back=Math.max(0,d-.2);break;}}
 cameraBack=back<cameraBack?back:cameraBack+(back-cameraBack)*(1-Math.exp(-dt*5));
-camera.position.set(pos.x-fx*cameraBack,CAMERA_HEIGHT,pos.z-fz*cameraBack);
+camera.position.set(pos.x-fx*cameraBack,CAMERA_HEIGHT+cameraGround,pos.z-fz*cameraBack);
 const pitch=CAMERA_PITCH*Math.PI/180;
 camera.lookAt(camera.position.x+fx*Math.cos(pitch),camera.position.y-Math.sin(pitch),camera.position.z+fz*Math.cos(pitch));if(!$('navigation').hidden)renderer.render(scene,camera);frames++;elapsed+=raw;if(elapsed>=2){fps=Math.round(frames/elapsed);frames=0;elapsed=0;if($('quality').value==='auto'&&fps<28&&ratio>.55){ratio=Math.max(.55,ratio-.15);resize()}status.textContent=notice;}}
 try{const r=await fetch('./mapa.json',{cache:'no-store'});if(!r.ok)throw Error('Mapa de exemplo indisponível');load(await r.json())}catch(e){notice=e.message;$('feedback').textContent=notice}requestAnimationFrame(tick);
