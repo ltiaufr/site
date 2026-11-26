@@ -298,6 +298,23 @@ const choice=document.createElement('dialog');choice.style.cssText='border:0;bor
 choice.innerHTML='<h2 id="qChoiceTitle"></h2><p>Escolha a modalidade de consulta</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="qOpen">Consulta rápida 2D</button><button id="qChoose3d">Navegação 3D</button><button id="qCancel">Cancelar</button></div>';document.body.append(choice);
 let qPoints=[],qData=null,qStart=0,qFrame=0,qZoom=1,qFocus=null,qLength=0,qDuration=0,qIndex=0,qCumulative=[],qPan={x:0,y:0};
 const qc=$('qCanvas'),qg=qc.getContext('2d');
+const qWalkerMask=new Image(),qWalker=document.createElement('canvas');
+qWalker.width=264;qWalker.height=192;
+let qWalkerReady=false;
+qWalkerMask.onload=()=>{const c=qWalker.getContext('2d');c.drawImage(qWalkerMask,0,0);const p=c.getImageData(0,0,264,192);for(let i=0;i<p.data.length;i+=4){const a=p.data[i];p.data[i]=24;p.data[i+1]=24;p.data[i+2]=24;p.data[i+3]=a;}c.putImageData(p,0,0);qWalkerReady=true;if(!quick.hidden)qRefresh();};
+qWalkerMask.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQgAAADAAQAAAADQQcA/AAAHw0lEQVR42uWYv48dOxXHPz7X2jtFlEy5RUiGp4iKYguKFVrts6L8FVT5D0gDpIiSE5QiBRL7B1Dsn5CCMgqj6BWvQvsHRI9hQbxbIGWIlpfJamJT2J7x3Lv7RIOEYGTd65ljH9vn1/f4wH/4qQGEYziGO3AEd+AYjnL7MRwhOAAaEGgAuA8O7qcmM0939VJCCwYMqZM/c0V3etr820IbRwT4E6kDeHgDPjXhp+DhzvxpPktsPNlpAwww5g5jnjpe3ZabFpB0suJzHmPYpi1Oa3a/SfFmip6UIpJpjbxAOXxbvHK9CQggKKidmpknmIKdy21bYbKjeAe6XCVqiyaEJtCEnX1YDNCg/4ATglYhDzLlKkGhha8xZ54TgotkkyWkmNqyga5iA22VjSSOE3DQBqjMxkeaOc0iAFSAQDey+QAXurnQswu6xANNPDyPPJrmGFDn0XwoFVOevk1mHGYZqhT2rQAd1wk38UyjB7iAoWHjhE00V5cZFIuOHSACBjd7b5O3Y6GPlvwO+TsoaNyAglJB1QLSIRYHmBEzgmIU/kCe0SbPtqfIwN7ACgSMz+75V2w8S+W5cUZ15uwG2yNj8mEBWqR6Sq1N3XLgqLp4nOyFUIHUNHehUQLUDhwezDgLSAIcQwAP7yGRomdX4JEGxlB/A+/ytDCbmN4C8eEO3Ox9mumfFRbaAkcC/hQvNBcwQngOChVYuFAYuUl3m27PjHY1mHXHrZZnSYDrvr1plDXsJaEOrPtpBCP0rJX/recQDuExHOXO1D+CxwgP4AFYuA8P4AW8AAcP4D7Y6A3yfWtIshe9MsyCltOj54/ZRpIhTyOeLHm8yVyfsMKf48/hHP6MP4e38JaffYU/5wfncC4TJNCBpAFojj0ygYWBH4LJfm9jIJniWHJsxRUI4tKvLIOFFpFSS2HpFVGkEE3m4DI3vU546V/j4tNMuZa9Tjy0yS8pApkYI6ZVTDyTzmiWnyYdSJYZg4DQbCPQNMiigA2xn1HMarE1xcIaheRtArIGm81kDWvwBuBm3JoiMaxZxcBNag83AMMIxrACGWEvRZWzMSVYszwqBcLDG6HdC60JB4SmClr7ZhUgPDRBbYhBKUDQFMu84lkFJWDix5kWwGM8Zkw0E1oTJsH4RYIRcAup72YlDPG3KTBqiujlM0KPsJlfth+PDHEfvSY1SNY9LT186OgQ3jkGx6/xg2KUXjFQKV1UmBMB3jUYBegdg6Nr582OCL4RXyerHBrGhk1DgNHRtfgmZ44cMMLlPr5mrA0IjdiUodTwGy4rcARLqMRXEwLR1pKy0TAp9AXhBWPKo21ALC9p38JjgO41AK/TnEqhijLtcmLbZUwHXtqYOxzylcXDAQD7cJETJPi9HoKccXTICB232aMXnOUAy34Lx+5MAdN9qQergfVv3d2WW52722JGzPNu1YPpdkNDYajN91D/65/bMckvoOcoWmGVac2CxoOo/dvwE/iCOc0+BFtG3GYZ7iJSuaty/hk3lneZJQJ5dnNE2abdL65B6TVeY47hKQQ1QTmEJ+AxMUBwBM8irV2FdhVanmACq6DpNceJSO5WoTWBSFuHdh1aMbQ5yjYWLI3Q2hxPoRHJ4bxI4RdhXqavdiGHeY4safWWKqtC4HUkV9SRQQVVgUBp6jp6WqLVcAInssNZgcBJyFYuU8BfXwGoELGhvIoagBNTqFImRUV3/oxbqrKVQo8MYNApTV6g6bBYuze04KAHJ1vkfDM/yFculWGeGnfwChBO8iIHM+5/pv1EP9CBeg4GXg2cDnQC7Sd6T/+ZM+hGAB1gpItJk/X00I0pTyfAwKmhM2jaWUmLpxqvSc3ikXQe3ROGiC8lebg6h9FE7ikZkH9twqgSoDYLS5Ad89Od+PctfMwtwEd4v2iybWLVsspSx409K3gESgjHT/t4CS9B4dnykjJfUllg+jUy5erUT9LC09RPBfnxxMNk8j8L8iMwEZh+Dr/Kp38EPXyEEf4IH+AGwi/gEzzM7h4ZXIADP2Ha/9GzD/vXfE96uQc/yhh1O3eO4B4cwv6k24hRX+RynMsXpXslArmiSFdUaGRGlrboFKFJAL7ZKcG9mQOZpOX9DpY5eB0TnpifHhc1Np/LavFQq9Ca0JqgcbZJ4MUqYEKqCzRCIzhjMAYxSMpJVdDVVn4qS0u3OHBidyDHFoBkS4yKU+2Ohwlgk3er3a5xNtBM+FLb7PoVi3LOtV5Z5SZh9mS3xgVcWAYRKdy92YFSjfl6W6g1ltmUAKEpoiVAGzjxKEEzP416FD8JIHwNdaCGs4mcakq5NthBW8cVDYNZ3Ctdjn2bGG+H5VleQQuuYtMzjGYAraCiibq0l3SX9PDqO+VCe7SHs4HmuyXedpcRneKp1V3CiBs4HTiVxZoUVbghXf2FcmOp6tQwTOpVAUy/AKi01tjEyVfqtotYFybNhXyFpIGH5BJcx4aQcK7OqJ5qp8rQZiTRGX5WHzV6Ck8hYP6ivIdvp31U2B4Z2OvTCCzcivt4maCt+h03euiK8hlQTXly4EAdp9AS4tWvS8qc6rgEQBk1X8Eqnet5U1j4eHWlZkiimROE7brDlPzA5wqvy+upxnymhw8Ih37Q8Dz79aj8MgEZ3IqYNRCrcF9iBla90sPf/o2Y/S/iYiMvt9i5KgAAAABJRU5ErkJggg==';
+function qDrawWalker(g,X,Y,distance,progress,now){
+ let i=1;while(i<qPoints.length-1&&qCumulative[i]<=distance)i++;
+ const a=qPoints[Math.max(0,i-1)],b=qPoints[i]||a;
+ const t=qPoints.length===1?0:Math.max(0,Math.min(1,(distance-qCumulative[i-1])/Math.max(1e-9,qCumulative[i]-qCumulative[i-1])));
+ const x=X(a.x+(b.x-a.x)*t),y=Y(a.z+(b.z-a.z)*t),dx=b.x-a.x,dy=b.z-a.z;
+ const row=Math.abs(dx)>=Math.abs(dy)?(dx>=0?0:1):(dy>=0?2:3);
+ const frames=row===3?[0,1,2,8,9,10]:[0,1,2,3,4,5,6,7,8,9,10];
+ const frame=progress>=1?frames[0]:frames[Math.floor(Math.max(0,now-qStart)/95)%frames.length];
+ g.save();g.fillStyle='rgba(0,0,0,.22)';g.beginPath();g.ellipse(x,y,8,3,0,0,Math.PI*2);g.fill();
+ if(qWalkerReady){g.shadowColor='white';g.shadowBlur=3;g.drawImage(qWalker,frame*24,row*48,24,48,x-10,y-38,20,40);}else{g.fillStyle='#1769d2';g.beginPath();g.arc(x,y,5,0,Math.PI*2);g.fill();}g.restore();
+}
+
 function qSelect(i){$('dest').value=i;$('qChoiceTitle').textContent=map.dest[i].nome;choice.showModal();}
 $('qCancel').onclick=()=>choice.close();
 $('qChoose3d').onclick=()=>{choice.close();$('go').click();};
@@ -325,6 +342,7 @@ function qDraw(now){
  g.strokeStyle='#fff';g.lineWidth=7;g.stroke();g.strokeStyle='#1769d2';g.lineWidth=4;g.stroke();
  const marker=(p,color,label)=>{const x=X(p.x),y=Y(p.z);g.fillStyle=color;g.beginPath();g.arc(x,y,6,0,Math.PI*2);g.fill();g.strokeStyle='#fff';g.lineWidth=2;g.stroke();g.font='bold 13px system-ui';g.textAlign=x>w*.65?'right':'left';const tx=x+(x>w*.65?-10:10);g.strokeStyle='#fff';g.lineWidth=4;g.strokeText(label,tx,y-10);g.fillStyle='#24354c';g.fillText(label,tx,y-10);};
  marker(qPoints[0],'#168442','Início');marker(qPoints.at(-1),'#c83b36',map.dest[qIndex].nome);
+ qDrawWalker(g,X,Y,distance,progress,now);
  if(progress<1)qFrame=requestAnimationFrame(qDraw);
 }
 function qRefresh(){cancelAnimationFrame(qFrame);qFrame=requestAnimationFrame(qDraw);}
