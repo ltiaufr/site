@@ -15631,16 +15631,6 @@
     },
     {
       "x" : 475,
-      "y" : 777,
-      "material" : "concreto"
-    },
-    {
-      "x" : 475,
-      "y" : 776,
-      "material" : "concreto"
-    },
-    {
-      "x" : 475,
       "y" : 775,
       "material" : "concreto"
     },
@@ -35898,6 +35888,1051 @@
       "x" : 588,
       "y" : 40,
       "material" : "concreto"
+    },
+    {
+      "x" : 550,
+      "y" : 214,
+      "material" : "concreto"
+    },
+    {
+      "x" : 551,
+      "y" : 214,
+      "material" : "concreto"
+    },
+    {
+      "x" : 552,
+      "y" : 214,
+      "material" : "concreto"
+    },
+    {
+      "x" : 553,
+      "y" : 214,
+      "material" : "concreto"
+    },
+    {
+      "x" : 554,
+      "y" : 215,
+      "material" : "concreto"
+    },
+    {
+      "x" : 555,
+      "y" : 215,
+      "material" : "concreto"
+    },
+    {
+      "x" : 556,
+      "y" : 215,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 215,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 214,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 213,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 212,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 211,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 210,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 209,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 208,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 207,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 206,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 205,
+      "material" : "concreto"
+    },
+    {
+      "x" : 557,
+      "y" : 204,
+      "material" : "concreto"
+    },
+    {
+      "x" : 556,
+      "y" : 204,
+      "material" : "concreto"
+    },
+    {
+      "x" : 555,
+      "y" : 204,
+      "material" : "concreto"
+    },
+    {
+      "x" : 554,
+      "y" : 204,
+      "material" : "concreto"
+    },
+    {
+      "x" : 553,
+      "y" : 204,
+      "material" : "concreto"
+    },
+    {
+      "x" : 552,
+      "y" : 204,
+      "material" : "concreto"
+    },
+    {
+      "x" : 551,
+      "y" : 204,
+      "material" : "concreto"
+    },
+    {
+      "x" : 550,
+      "y" : 204,
+      "material" : "concreto"
+    },
+    {
+      "x" : 549,
+      "y" : 204,
+      "material" : "concreto"
+    },
+    {
+      "x" : 549,
+      "y" : 205,
+      "material" : "concreto"
+    },
+    {
+      "x" : 549,
+      "y" : 206,
+      "material" : "concreto"
+    },
+    {
+      "x" : 549,
+      "y" : 207,
+      "material" : "concreto"
+    },
+    {
+      "x" : 549,
+      "y" : 208,
+      "material" : "concreto"
+    },
+    {
+      "x" : 550,
+      "y" : 209,
+      "material" : "concreto"
+    },
+    {
+      "x" : 550,
+      "y" : 210,
+      "material" : "concreto"
+    },
+    {
+      "x" : 550,
+      "y" : 211,
+      "material" : "concreto"
+    },
+    {
+      "x" : 550,
+      "y" : 212,
+      "material" : "concreto"
+    },
+    {
+      "x" : 550,
+      "y" : 213,
+      "material" : "concreto"
+    },
+    {
+      "x" : 667,
+      "y" : 739,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 781,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 775,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 774,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 773,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 772,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 771,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 770,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 769,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 768,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 767,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 766,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 765,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 764,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 763,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 762,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 761,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 760,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 759,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 758,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 757,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 756,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 755,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 754,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 753,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 752,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 751,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 750,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 749,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 748,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 747,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 746,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 745,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 744,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 743,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 742,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 741,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 740,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 739,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 738,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 737,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 736,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 735,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 734,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 733,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 732,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 731,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 730,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 729,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 728,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 727,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 726,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 725,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 724,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 723,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 722,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 721,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 720,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 719,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 479,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 478,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 477,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 476,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 781,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 780,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 779,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 777,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 776,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 775,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 774,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 773,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 772,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 771,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 770,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 769,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 768,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 767,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 766,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 765,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 764,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 763,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 762,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 761,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 760,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 759,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 758,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 757,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 756,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 755,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 754,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 753,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 752,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 751,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 750,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 749,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 748,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 747,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 746,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 745,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 744,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 743,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 742,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 741,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 740,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 739,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 738,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 737,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 736,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 735,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 734,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 733,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 732,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 731,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 730,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 729,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 728,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 727,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 726,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 725,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 724,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 723,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 722,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 721,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 720,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 719,
+      "material" : "concreto"
+    },
+    {
+      "x" : 486,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 487,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 488,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 489,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 490,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 491,
+      "y" : 718,
+      "material" : "concreto"
+    },
+    {
+      "x" : 479,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 478,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 477,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 476,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 479,
+      "y" : 775,
+      "material" : "concreto"
+    },
+    {
+      "x" : 478,
+      "y" : 775,
+      "material" : "concreto"
+    },
+    {
+      "x" : 477,
+      "y" : 775,
+      "material" : "concreto"
+    },
+    {
+      "x" : 476,
+      "y" : 775,
+      "material" : "concreto"
+    },
+    {
+      "x" : 479,
+      "y" : 771,
+      "material" : "concreto"
+    },
+    {
+      "x" : 478,
+      "y" : 771,
+      "material" : "concreto"
+    },
+    {
+      "x" : 477,
+      "y" : 771,
+      "material" : "concreto"
+    },
+    {
+      "x" : 476,
+      "y" : 771,
+      "material" : "concreto"
+    },
+    {
+      "x" : 479,
+      "y" : 767,
+      "material" : "concreto"
+    },
+    {
+      "x" : 476,
+      "y" : 767,
+      "material" : "concreto"
+    },
+    {
+      "x" : 477,
+      "y" : 767,
+      "material" : "concreto"
+    },
+    {
+      "x" : 478,
+      "y" : 767,
+      "material" : "concreto"
+    },
+    {
+      "x" : 479,
+      "y" : 763,
+      "material" : "concreto"
+    },
+    {
+      "x" : 478,
+      "y" : 763,
+      "material" : "concreto"
+    },
+    {
+      "x" : 477,
+      "y" : 763,
+      "material" : "concreto"
+    },
+    {
+      "x" : 476,
+      "y" : 763,
+      "material" : "concreto"
+    },
+    {
+      "x" : 476,
+      "y" : 759,
+      "material" : "concreto"
+    },
+    {
+      "x" : 477,
+      "y" : 759,
+      "material" : "concreto"
+    },
+    {
+      "x" : 478,
+      "y" : 759,
+      "material" : "concreto"
+    },
+    {
+      "x" : 479,
+      "y" : 759,
+      "material" : "concreto"
+    },
+    {
+      "x" : 479,
+      "y" : 755,
+      "material" : "concreto"
+    },
+    {
+      "x" : 478,
+      "y" : 755,
+      "material" : "concreto"
+    },
+    {
+      "x" : 477,
+      "y" : 755,
+      "material" : "concreto"
+    },
+    {
+      "x" : 476,
+      "y" : 755,
+      "material" : "concreto"
+    },
+    {
+      "x" : 487,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 488,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 489,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 490,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 491,
+      "y" : 778,
+      "material" : "concreto"
+    },
+    {
+      "x" : 487,
+      "y" : 773,
+      "material" : "concreto"
+    },
+    {
+      "x" : 488,
+      "y" : 773,
+      "material" : "concreto"
+    },
+    {
+      "x" : 489,
+      "y" : 773,
+      "material" : "concreto"
+    },
+    {
+      "x" : 490,
+      "y" : 773,
+      "material" : "concreto"
+    },
+    {
+      "x" : 491,
+      "y" : 773,
+      "material" : "concreto"
+    },
+    {
+      "x" : 480,
+      "y" : 779,
+      "material" : "concreto"
     }
   ],
   "pisos" : [
@@ -35998,6 +37033,28 @@
       "largura" : 2.0000000000000000E+000,
       "folhas" : 2,
       "largura_folha" : 1.0000000000000000E+000
+    },
+    {
+      "id" : "porta_5",
+      "x1" : 4.7534099459130601E+002,
+      "y1" : 7.7617253060359951E+002,
+      "x2" : 4.7534099459130601E+002,
+      "y2" : 7.7777075819088270E+002,
+      "altura" : 2.1000000000000001E+000,
+      "material" : "madeira",
+      "estado" : "fechada",
+      "angulo_abertura" : 90
+    },
+    {
+      "id" : "porta_6",
+      "x1" : 4.8069158260090620E+002,
+      "y1" : 7.8082823705351132E+002,
+      "x2" : 4.8062209444493737E+002,
+      "y2" : 7.7992489102591651E+002,
+      "altura" : 2.1000000000000001E+000,
+      "material" : "madeira",
+      "estado" : "fechada",
+      "angulo_abertura" : 90
     }
   ],
   "objetos" : [
@@ -36117,6 +37174,11 @@
       "nome" : "Auditorio",
       "x" : 4.4130008659117698E+002,
       "y" : 7.3573427240742296E+002
+    },
+    {
+      "nome" : "Sala: Clóvis/Eberson",
+      "x" : 4.7841505364625920E+002,
+      "y" : 7.8027646092569000E+002
     }
   ],
   "coberturas" : [
@@ -36478,6 +37540,29 @@
         {
           "x" : 3.2465896048482693E+002,
           "y" : 9.4341108439271102E+002
+        }
+      ],
+      "altura_teto" : 2.7999999999999998E+000,
+      "material" : "acrilico"
+    },
+    {
+      "tipo" : "poligono",
+      "pontos" : [
+        {
+          "x" : 4.7552944948832231E+002,
+          "y" : 7.1785251020916121E+002
+        },
+        {
+          "x" : 4.7552944948832231E+002,
+          "y" : 7.8273130680246925E+002
+        },
+        {
+          "x" : 4.9271955798740390E+002,
+          "y" : 7.8273130680246925E+002
+        },
+        {
+          "x" : 4.9234987823473551E+002,
+          "y" : 7.1822218996182960E+002
         }
       ],
       "altura_teto" : 2.7999999999999998E+000,
@@ -36916,6 +38001,40 @@
         {
           "x" : 3.4076551487042769E+002,
           "y" : 6.8102051960621804E+002
+        }
+      ]
+    },
+    {
+      "destino" : "Sala: Clóvis/Eberson",
+      "destino_indice" : 15,
+      "pontos" : [
+        {
+          "x" : 5.3197555917278964E+002,
+          "y" : 8.3722026769158140E+002
+        },
+        {
+          "x" : 5.2856769420751471E+002,
+          "y" : 7.9875006141497852E+002
+        },
+        {
+          "x" : 4.7015829328590399E+002,
+          "y" : 7.9764102215697324E+002
+        },
+        {
+          "x" : 4.7015829328590399E+002,
+          "y" : 7.7730863576021000E+002
+        },
+        {
+          "x" : 4.8235772512396193E+002,
+          "y" : 7.7693895600754161E+002
+        },
+        {
+          "x" : 4.8272740487663032E+002,
+          "y" : 7.8045091365789153E+002
+        },
+        {
+          "x" : 4.7841505364625920E+002,
+          "y" : 7.8027646092569000E+002
         }
       ]
     }
