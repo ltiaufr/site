@@ -37351,6 +37351,28 @@
       "material" : "madeira",
       "estado" : "fechada",
       "angulo_abertura" : 90
+    },
+    {
+      "id" : "porta_9",
+      "x1" : 4.1445783769355432E+002,
+      "y1" : 8.6006961530834792E+002,
+      "x2" : 4.1688854207536360E+002,
+      "y2" : 8.6017529810755696E+002,
+      "altura" : 2.1000000000000001E+000,
+      "material" : "madeira",
+      "estado" : "fechada",
+      "angulo_abertura" : 90
+    },
+    {
+      "id" : "porta_10",
+      "x1" : 3.4737894303994926E+002,
+      "y1" : 5.4249367783338221E+002,
+      "x2" : 3.4737894303994926E+002,
+      "y2" : 5.4039719530407160E+002,
+      "altura" : 2.1000000000000001E+000,
+      "material" : "madeira",
+      "estado" : "fechada",
+      "angulo_abertura" : 90
     }
   ],
   "objetos" : [
@@ -37396,11 +37418,6 @@
     }
   ],
   "destinos" : [
-    {
-      "nome" : "Predio Administrativo",
-      "x" : 4.1096065838306259E+002,
-      "y" : 8.5357294511364057E+002
-    },
     {
       "nome" : "Bloco E (Didático)",
       "x" : 3.0605082571508825E+002,
@@ -37475,6 +37492,16 @@
       "nome" : "Sala: Clóvis/Eberson",
       "x" : 4.7841505364625920E+002,
       "y" : 7.8027646092569000E+002
+    },
+    {
+      "nome" : "Prédio Administrativo",
+      "x" : 4.1489533391007092E+002,
+      "y" : 8.6457957035888148E+002
+    },
+    {
+      "nome" : "Laboratório 1C",
+      "x" : 3.4989472207512188E+002,
+      "y" : 5.4151531931970396E+002
     }
   ],
   "coberturas" : [
@@ -37867,26 +37894,8 @@
   ],
   "rotas" : [
     {
-      "destino" : "Predio Administrativo",
-      "destino_indice" : 0,
-      "pontos" : [
-        {
-          "x" : 5.3197555917278964E+002,
-          "y" : 8.3722026769158140E+002
-        },
-        {
-          "x" : 4.1322091127327451E+002,
-          "y" : 8.2771989585962012E+002
-        },
-        {
-          "x" : 4.1096065838306259E+002,
-          "y" : 8.5357294511364057E+002
-        }
-      ]
-    },
-    {
       "destino" : "Bloco E (Didático)",
-      "destino_indice" : 1,
+      "destino_indice" : 0,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -37908,7 +37917,7 @@
     },
     {
       "destino" : "Laboratorio de Climatologia",
-      "destino_indice" : 3,
+      "destino_indice" : 2,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -37938,7 +37947,7 @@
     },
     {
       "destino" : "NEATI",
-      "destino_indice" : 6,
+      "destino_indice" : 5,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -37972,7 +37981,7 @@
     },
     {
       "destino" : "Galpão Zootecnia",
-      "destino_indice" : 5,
+      "destino_indice" : 4,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -37998,7 +38007,7 @@
     },
     {
       "destino" : "Centro de Vivencia - Estudantes",
-      "destino_indice" : 4,
+      "destino_indice" : 3,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38032,7 +38041,7 @@
     },
     {
       "destino" : "Galpão EAA",
-      "destino_indice" : 8,
+      "destino_indice" : 7,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38066,7 +38075,7 @@
     },
     {
       "destino" : "Bloco F - Medicina",
-      "destino_indice" : 11,
+      "destino_indice" : 10,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38092,7 +38101,7 @@
     },
     {
       "destino" : "Bloco D - Enfermagem",
-      "destino_indice" : 10,
+      "destino_indice" : 9,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38130,7 +38139,7 @@
     },
     {
       "destino" : "Bloco B - Psicologia",
-      "destino_indice" : 12,
+      "destino_indice" : 11,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38160,7 +38169,7 @@
     },
     {
       "destino" : "STI",
-      "destino_indice" : 9,
+      "destino_indice" : 8,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38186,7 +38195,7 @@
     },
     {
       "destino" : "RU",
-      "destino_indice" : 7,
+      "destino_indice" : 6,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38216,7 +38225,7 @@
     },
     {
       "destino" : "NUPEC",
-      "destino_indice" : 13,
+      "destino_indice" : 12,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38250,7 +38259,7 @@
     },
     {
       "destino" : "Auditorio",
-      "destino_indice" : 14,
+      "destino_indice" : 13,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38276,7 +38285,7 @@
     },
     {
       "destino" : "Biblioteca",
-      "destino_indice" : 2,
+      "destino_indice" : 1,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38302,7 +38311,7 @@
     },
     {
       "destino" : "Sala: Clóvis/Eberson",
-      "destino_indice" : 15,
+      "destino_indice" : 14,
       "pontos" : [
         {
           "x" : 5.3197555917278964E+002,
@@ -38331,6 +38340,58 @@
         {
           "x" : 4.7841505364625920E+002,
           "y" : 7.8027646092569000E+002
+        }
+      ]
+    },
+    {
+      "destino" : "Prédio Administrativo",
+      "destino_indice" : 15,
+      "pontos" : [
+        {
+          "x" : 5.3197555917278964E+002,
+          "y" : 8.3722026769158140E+002
+        },
+        {
+          "x" : 5.0449646396307969E+002,
+          "y" : 8.3208472009932711E+002
+        },
+        {
+          "x" : 4.1521880369365567E+002,
+          "y" : 8.3208472009932711E+002
+        },
+        {
+          "x" : 4.1489533391007092E+002,
+          "y" : 8.6457957035888148E+002
+        }
+      ]
+    },
+    {
+      "destino" : "Laboratório 1C",
+      "destino_indice" : 16,
+      "pontos" : [
+        {
+          "x" : 5.3197555917278964E+002,
+          "y" : 8.3722026769158140E+002
+        },
+        {
+          "x" : 5.3124919992490254E+002,
+          "y" : 8.0285735247374907E+002
+        },
+        {
+          "x" : 4.2721018892369767E+002,
+          "y" : 8.0090662101747648E+002
+        },
+        {
+          "x" : 4.1680628782357718E+002,
+          "y" : 5.8827689228376391E+002
+        },
+        {
+          "x" : 3.4983117449155151E+002,
+          "y" : 5.8827689228376391E+002
+        },
+        {
+          "x" : 3.4989472207512188E+002,
+          "y" : 5.4151531931970396E+002
         }
       ]
     }
