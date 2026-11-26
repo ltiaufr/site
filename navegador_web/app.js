@@ -343,7 +343,7 @@ function qDraw(now){
    const elapsed=Math.max(0,now-qStart);
    const blend=qEase(elapsed/Math.min(1100,qDuration*.4))*(1-qEase((elapsed-qDuration)/qReturnMs));
    const p=qPosition(distance);
-   const target=Math.max(fit,Math.min(fit*5,Math.min(w,h)/16));
+   const target=Math.max(fit,Math.min(fit*8,Math.min(w,h)/10));
    scale=fit+(target-fit)*blend;
    cx+=(p.x-cx)*blend;cy+=(p.y-cy)*blend;
  }
