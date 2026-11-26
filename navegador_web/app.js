@@ -298,6 +298,17 @@ const choice=document.createElement('dialog');choice.style.cssText='border:0;bor
 choice.innerHTML='<h2 id="qChoiceTitle"></h2><p>Escolha a modalidade de consulta</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="qOpen">Consulta rápida 2D</button><button id="qChoose3d">Navegação 3D</button><button id="qCancel">Cancelar</button></div>';document.body.append(choice);
 let qPoints=[],qData=null,qStart=0,qFrame=0,qZoom=1,qFocus=null,qLength=0,qDuration=0,qIndex=0,qCumulative=[],qPan={x:0,y:0};
 const qc=$('qCanvas'),qg=qc.getContext('2d');
+let qAutoFollow=true;
+const qReturnMs=1400;
+const qEase=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
+function qPosition(distance){
+ let i=1;while(i<qPoints.length-1&&qCumulative[i]<=distance)i++;
+ const a=qPoints[Math.max(0,i-1)],b=qPoints[i]||a;
+ const t=qPoints.length===1?0:Math.max(0,Math.min(1,(distance-qCumulative[i-1])/Math.max(1e-9,qCumulative[i]-qCumulative[i-1])));
+ return {x:a.x+(b.x-a.x)*t,y:a.z+(b.z-a.z)*t};
+}
+function qResetFollow(){qAutoFollow=true;qFocus=null;qZoom=1;qPan={x:0,y:0};}
+
 const qWalkerMask=new Image(),qWalker=document.createElement('canvas');
 qWalker.width=264;qWalker.height=192;
 let qWalkerReady=false;
@@ -311,8 +322,8 @@ function qDrawWalker(g,X,Y,distance,progress,now){
  const row=Math.abs(dx)>=Math.abs(dy)?(dx>=0?0:1):(dy>=0?2:3);
  const frames=row===3?[0,1,2,8,9,10]:[0,1,2,3,4,5,6,7,8,9,10];
  const frame=progress>=1?frames[0]:frames[Math.floor(Math.max(0,now-qStart)/95)%frames.length];
- g.save();g.fillStyle='rgba(0,0,0,.22)';g.beginPath();g.ellipse(x,y,8,3,0,0,Math.PI*2);g.fill();
- if(qWalkerReady){g.shadowColor='white';g.shadowBlur=3;g.drawImage(qWalker,frame*24,row*48,24,48,x-10,y-38,20,40);}else{g.fillStyle='#1769d2';g.beginPath();g.arc(x,y,5,0,Math.PI*2);g.fill();}g.restore();
+ g.save();g.fillStyle='rgba(0,0,0,.22)';g.beginPath();g.ellipse(x,y,5.6,2.1,0,0,Math.PI*2);g.fill();
+ if(qWalkerReady){g.shadowColor='white';g.shadowBlur=3;g.drawImage(qWalker,frame*24,row*48,24,48,x-7,y-26.6,14,28);}else{g.fillStyle='#1769d2';g.beginPath();g.arc(x,y,5,0,Math.PI*2);g.fill();}g.restore();
 }
 
 function qSelect(i){$('dest').value=i;$('qChoiceTitle').textContent=map.dest[i].nome;choice.showModal();}
@@ -324,8 +335,19 @@ function qDraw(now){
  const w=qc.clientWidth,h=qc.clientHeight;if(!w||!h){qFrame=requestAnimationFrame(qDraw);return;}
  const dpr=Math.min(devicePixelRatio||1,2);if(qc.width!==Math.round(w*dpr)||qc.height!==Math.round(h*dpr)){qc.width=Math.round(w*dpr);qc.height=Math.round(h*dpr);}
  const g=qg;g.setTransform(dpr,0,0,dpr,0,0);g.fillStyle='#f8fafc';g.fillRect(0,0,w,h);
- const b=qFocus||bounds,scale=Math.max(.0001,Math.min(Math.max(1,w-48)/Math.max(1,b.maxX-b.minX),Math.max(1,h-48)/Math.max(1,b.maxY-b.minY)))*qZoom;
- const X=x=>w/2+(x-(b.minX+b.maxX)/2)*scale+qPan.x,Y=y=>h/2+(y-(b.minY+b.maxY)/2)*scale+qPan.y;
+ const progress=Math.min(1,Math.max(0,(now-qStart)/qDuration)),distance=qLength*progress;
+ const b=qFocus||bounds;
+ const fit=Math.max(.0001,Math.min(Math.max(1,w-48)/Math.max(1,b.maxX-b.minX),Math.max(1,h-48)/Math.max(1,b.maxY-b.minY)));
+ let scale=fit*qZoom,cx=(b.minX+b.maxX)/2,cy=(b.minY+b.maxY)/2;
+ if(qAutoFollow){
+   const elapsed=Math.max(0,now-qStart);
+   const blend=qEase(elapsed/Math.min(1100,qDuration*.4))*(1-qEase((elapsed-qDuration)/qReturnMs));
+   const p=qPosition(distance);
+   const target=Math.max(fit,Math.min(fit*3,Math.min(w,h)/24));
+   scale=fit+(target-fit)*blend;
+   cx+=(p.x-cx)*blend;cy+=(p.y-cy)*blend;
+ }
+ const X=x=>w/2+(x-cx)*scale+qPan.x,Y=y=>h/2+(y-cy)*scale+qPan.y;
  const line=(a,b,color,width)=>{g.strokeStyle=color;g.lineWidth=width;g.beginPath();g.moveTo(X(a.x),Y(a.y));g.lineTo(X(b.x),Y(b.y));g.stroke();};
  for(const p of pavementAreas(qData)){g.fillStyle=/asfalto|rua|paviment/.test(p.material)?'#aab1b8':/grama/.test(p.material)?'#cce2b9':/terra/.test(p.material)?'#ddc8ad':'#e4e1da';g.fillRect(X(p.x),Y(p.y),p.w*scale,p.h*scale);}
  for(const c of normalizeCoverages(qData.coberturas||[])){g.fillStyle='#e5ebf1';g.beginPath();c.pontos.forEach((p,i)=>i?g.lineTo(X(p.x),Y(p.y)):g.moveTo(X(p.x),Y(p.y)));g.closePath();g.fill();}
@@ -336,24 +358,23 @@ function qDraw(now){
  for(const p of architecture.joints){g.fillStyle='#354657';g.beginPath();g.arc(X(p.x),Y(p.y),Math.max(.7,p.r*scale),0,Math.PI*2);g.fill();}
  for(const d of architecture.doors)line({x:d.cx-d.ux*d.width/2,y:d.cy-d.uy*d.width/2},{x:d.cx+d.ux*d.width/2,y:d.cy+d.uy*d.width/2},'#b78b55',Math.max(1,scale*.12));
  for(const p of qData.objetos||[]){g.fillStyle=/arvore|árvore|tree/i.test(p.nome||p.tipo||'')?'#75a86c':'#8796a3';g.beginPath();g.arc(X(Number(p.x)+.5),Y(Number(p.y)+.5),Math.max(1.5,scale*.35),0,Math.PI*2);g.fill();}
- const progress=Math.min(1,Math.max(0,(now-qStart)/qDuration)),distance=qLength*progress;
  g.beginPath();g.moveTo(X(qPoints[0].x),Y(qPoints[0].z));
  for(let i=1;i<qPoints.length;i++){const a=qPoints[i-1],b=qPoints[i];if(qCumulative[i]<=distance){g.lineTo(X(b.x),Y(b.z));continue;}const t=(distance-qCumulative[i-1])/Math.max(1e-9,qCumulative[i]-qCumulative[i-1]);g.lineTo(X(a.x+(b.x-a.x)*t),Y(a.z+(b.z-a.z)*t));break;}
  g.strokeStyle='#fff';g.lineWidth=7;g.stroke();g.strokeStyle='#1769d2';g.lineWidth=4;g.stroke();
  const marker=(p,color,label)=>{const x=X(p.x),y=Y(p.z);g.fillStyle=color;g.beginPath();g.arc(x,y,6,0,Math.PI*2);g.fill();g.strokeStyle='#fff';g.lineWidth=2;g.stroke();g.font='bold 13px system-ui';g.textAlign=x>w*.65?'right':'left';const tx=x+(x>w*.65?-10:10);g.strokeStyle='#fff';g.lineWidth=4;g.strokeText(label,tx,y-10);g.fillStyle='#24354c';g.fillText(label,tx,y-10);};
  marker(qPoints[0],'#168442','Início');marker(qPoints.at(-1),'#c83b36',map.dest[qIndex].nome);
  qDrawWalker(g,X,Y,distance,progress,now);
- if(progress<1)qFrame=requestAnimationFrame(qDraw);
+ if(progress<1||(qAutoFollow&&now-qStart<qDuration+qReturnMs))qFrame=requestAnimationFrame(qDraw);
 }
 function qRefresh(){cancelAnimationFrame(qFrame);qFrame=requestAnimationFrame(qDraw);}
-$('qOpen').onclick=()=>{choice.close();try{qIndex=Number($('dest').value);const d=map.dest[qIndex];qPoints=manualPath(d,qIndex)??path(map.start,d);if(!qPoints.length)throw Error('Rota não encontrada para '+d.nome);qCumulative=[0];for(let i=1;i<qPoints.length;i++)qCumulative.push(qCumulative[i-1]+qPoints[i-1].distanceTo(qPoints[i]));qLength=qCumulative.at(-1);qDuration=Math.max(1800,Math.min(12000,qLength*90));qStart=performance.now();qZoom=1;qFocus=null;qPan={x:0,y:0};$('qTitle').textContent=d.nome+' · '+Math.round(qLength)+' m';$('consult').hidden=true;quick.hidden=false;qRefresh();}catch(e){$('feedback').textContent=e.message;}};
+$('qOpen').onclick=()=>{choice.close();try{qIndex=Number($('dest').value);const d=map.dest[qIndex];qPoints=manualPath(d,qIndex)??path(map.start,d);if(!qPoints.length)throw Error('Rota não encontrada para '+d.nome);qCumulative=[0];for(let i=1;i<qPoints.length;i++)qCumulative.push(qCumulative[i-1]+qPoints[i-1].distanceTo(qPoints[i]));qLength=qCumulative.at(-1);qDuration=Math.max(1800,Math.min(12000,qLength*90));qStart=performance.now();qResetFollow();$('qTitle').textContent=d.nome+' · '+Math.round(qLength)+' m';$('consult').hidden=true;quick.hidden=false;qRefresh();}catch(e){$('feedback').textContent=e.message;}};
 $('qBack').onclick=()=>{qClose();$('consult').hidden=false;};
 $('q3d').onclick=()=>{qClose();$('dest').value=qIndex;$('go').click();if($('navigation').hidden)$('consult').hidden=false;};
-$('qReplay').onclick=()=>{qStart=performance.now();qRefresh();};
-$('qFit').onclick=()=>{qFocus=null;qZoom=1;qPan={x:0,y:0};qRefresh();};
-$('qRoute').onclick=()=>{let xs=qPoints.map(p=>p.x),ys=qPoints.map(p=>p.z);qFocus={minX:Math.min(...xs)-2,maxX:Math.max(...xs)+2,minY:Math.min(...ys)-2,maxY:Math.max(...ys)+2};qZoom=1;qPan={x:0,y:0};qRefresh();};
-$('qPlus').onclick=()=>{qZoom=Math.min(20,qZoom*1.35);qRefresh();};$('qMinus').onclick=()=>{qZoom=Math.max(.3,qZoom/1.35);qRefresh();};
-let qDrag=null;qc.addEventListener('pointerdown',e=>{qDrag={x:e.clientX,y:e.clientY};qc.setPointerCapture(e.pointerId);});qc.addEventListener('pointermove',e=>{if(!qDrag)return;qPan.x+=e.clientX-qDrag.x;qPan.y+=e.clientY-qDrag.y;qDrag={x:e.clientX,y:e.clientY};qRefresh();});for(const event of ['pointerup','pointercancel','lostpointercapture'])qc.addEventListener(event,()=>qDrag=null);
+$('qReplay').onclick=()=>{qStart=performance.now();qResetFollow();qRefresh();};
+$('qFit').onclick=()=>{qAutoFollow=false;qFocus=null;qZoom=1;qPan={x:0,y:0};qRefresh();};
+$('qRoute').onclick=()=>{qAutoFollow=false;let xs=qPoints.map(p=>p.x),ys=qPoints.map(p=>p.z);qFocus={minX:Math.min(...xs)-2,maxX:Math.max(...xs)+2,minY:Math.min(...ys)-2,maxY:Math.max(...ys)+2};qZoom=1;qPan={x:0,y:0};qRefresh();};
+$('qPlus').onclick=()=>{qAutoFollow=false;qZoom=Math.min(20,qZoom*1.35);qRefresh();};$('qMinus').onclick=()=>{qAutoFollow=false;qZoom=Math.max(.3,qZoom/1.35);qRefresh();};
+let qDrag=null;qc.addEventListener('pointerdown',e=>{qDrag={x:e.clientX,y:e.clientY};qc.setPointerCapture(e.pointerId);});qc.addEventListener('pointermove',e=>{if(!qDrag)return;qAutoFollow=false;qPan.x+=e.clientX-qDrag.x;qPan.y+=e.clientY-qDrag.y;qDrag={x:e.clientX,y:e.clientY};qRefresh();});for(const event of ['pointerup','pointercancel','lostpointercapture'])qc.addEventListener(event,()=>qDrag=null);
 new ResizeObserver(()=>{if(!quick.hidden)qRefresh();}).observe(qc);
 
 let returnTimer=0; const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
