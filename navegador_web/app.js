@@ -1,4 +1,5 @@
 import * as T from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import polygonClipping from 'https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/+esm';
 // Escala somente da apresentação; JSON, grade de rotas e colisões mantêm suas coordenadas.
 const WORLD_SCALE=.5;
 const $=id=>document.getElementById(id), view=$('view'), status=$('status');
@@ -75,7 +76,34 @@ function roadCurve(p,smooth){if(!smooth||p.length<3)return p;const out=[p[0]];le
 function readRoads(data){return (Array.isArray(data.vias)?data.vias:[]).filter(v=>v&&Array.isArray(v.pontos)&&v.pontos.length>=2&&v.pontos.every(valid)&&Number.isFinite(v.largura)&&v.largura>0&&v.largura<=100).map(v=>({...v,p:roadCurve(v.pontos,v.suavizar!==false)}));}
 function roadMarks(r,emit){if(r.tipo!=='asfalto'||!['continua','dupla','tracejada'].includes(r.faixa_central))return;let along=0;for(let i=1;i<r.p.length;i++){const a=r.p[i-1],b=r.p[i],dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy);if(L<1e-8)continue;const segment=(u,v,o)=>emit({x:a.x+dx*u/L-dy*o/L,y:a.y+dy*u/L+dx*o/L},{x:a.x+dx*v/L-dy*o/L,y:a.y+dy*v/L+dx*o/L});if(r.faixa_central==='dupla'){segment(0,L,-.13);segment(0,L,.13);}else if(r.faixa_central==='continua')segment(0,L,0);else{let step=0;while(step<L-1e-8){let take=Math.min(L-step,3-(along%3));if(take<1e-8)take=Math.min(L-step,3);if(Math.floor(along/3)%2===0)segment(step,step+take,0);step+=take;along+=take;}}}}
 function drawRoads2D(g,X,Y,scale){for(const r of roads){g.lineCap='round';g.lineJoin='round';g.strokeStyle=r.tipo==='asfalto'?'#4b4e52':'#a6774b';g.lineWidth=Math.max(1,r.largura*scale);g.beginPath();r.p.forEach((p,i)=>i?g.lineTo(X(p.x),Y(p.y)):g.moveTo(X(p.x),Y(p.y)));g.stroke();g.strokeStyle=r.cor_faixa==='branca'?'#fff':'#ebcd46';g.lineWidth=Math.max(.6,.12*scale);roadMarks(r,(a,b)=>{g.beginPath();g.moveTo(X(a.x),Y(a.y));g.lineTo(X(b.x),Y(b.y));g.stroke();});}}
-function drawRoads3D(){for(const r of roads){const material=mat(r.tipo==='asfalto'?0x4b4e52:0xa6774b),mark=mat(r.cor_faixa==='branca'?0xffffff:0xebcd46);const y=.012;function strip(a,b,w,h,m){const dx=b.x-a.x,dz=b.y-a.y,L=Math.hypot(dx,dz);if(L<1e-8)return;const mesh=new T.Mesh(new T.PlaneGeometry(L,w),m);mesh.rotation.order='YXZ';mesh.rotation.x=-Math.PI/2;mesh.rotation.y=-Math.atan2(dz,dx);mesh.position.set((a.x+b.x)/2,h,(a.y+b.y)/2);world.add(mesh);}for(let i=1;i<r.p.length;i++)strip(r.p[i-1],r.p[i],r.largura,y,material);for(const p of r.p){const mesh=new T.Mesh(new T.CircleGeometry(r.largura/2,24),material);mesh.rotation.x=-Math.PI/2;mesh.position.set(p.x,y,p.y);world.add(mesh);}roadMarks(r,(a,b)=>strip(a,b,.12,y+.004,mark));}}
+// Shared road footprint: rounded caps and joins, matching Canvas strokes.
+function roadPolygon(r){
+ const rad=r.largura/2, parts=[];
+ for(let i=1;i<r.p.length;i++){const a=r.p[i-1],b=r.p[i],dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy);if(L<1e-8)continue;const x=-dy/L*rad,y=dx/L*rad;parts.push([[[a.x+x,a.y+y],[b.x+x,b.y+y],[b.x-x,b.y-y],[a.x-x,a.y-y],[a.x+x,a.y+y]]]);}
+ for(const p of r.p){const ring=Array.from({length:32},(_,i)=>[p.x+rad*Math.cos(i*Math.PI/16),p.y+rad*Math.sin(i*Math.PI/16)]);ring.push(ring[0]);parts.push([ring]);}
+ return parts.length?polygonClipping.union(...parts):[];
+}
+const rectPolygon=r=>[[[r.x,r.y],[r.x+r.w,r.y],[r.x+r.w,r.y+r.h],[r.x,r.y+r.h],[r.x,r.y]]];
+const unionPolys=parts=>parts.length?polygonClipping.union(...parts):[];
+const minusPoly=(a,b)=>a.length&&b.length?polygonClipping.difference(a,b):a;
+const isRoadSurface=p=>/asfalto|rua|paviment/.test(p.material);
+const isSidewalk=p=>/calcada|calçada|passeio/.test(p.material);
+let roadFootprints=[],roadUnion=[],raisedUnion=[],exposedRoadUnion=[];
+function readSidewalks(data){return (Array.isArray(data.calcadas)?data.calcadas:[]).map(c=>({a:{x:Number(c.x1),y:Number(c.y1)},b:{x:Number(c.x2),y:Number(c.y2)},w:Number(c.largura),h:Number(c.altura??.15),material:'concreto',sidewalk:true})).filter(c=>valid(c.a)&&valid(c.b)&&Number.isFinite(c.w)&&c.w>0&&Number.isFinite(c.h)&&c.h>0&&c.h<=1&&Math.hypot(c.b.x-c.a.x,c.b.y-c.a.y)>.05);}
+function prepareRoadGeometry(areas){
+ roadFootprints=roads.map(r=>roadPolygon(r));
+ roadUnion=unionPolys([...roadFootprints.filter(p=>p.length),...areas.filter(isRoadSurface).map(rectPolygon)]);
+ raisedUnion=unionPolys([...areas.filter(p=>!isRoadSurface(p)).map(rectPolygon),...medians.map(c=>{const ring=medianOutline(c).map(p=>[p.x,p.y]);ring.push(ring[0]);return [ring];})]);
+ exposedRoadUnion=minusPoly(roadUnion,raisedUnion);
+}
+function polygonMesh(poly,height,material){
+ for(const rings of poly){if(!rings.length)continue;const shape=new T.Shape();rings[0].forEach((p,i)=>i?shape.lineTo(p[0],-p[1]):shape.moveTo(p[0],-p[1]));shape.closePath();for(const ring of rings.slice(1)){const hole=new T.Path();ring.forEach((p,i)=>i?hole.lineTo(p[0],-p[1]):hole.moveTo(p[0],-p[1]));hole.closePath();shape.holes.push(hole);}const geo=new T.ShapeGeometry(shape);geo.rotateX(-Math.PI/2);const mesh=new T.Mesh(geo,material.clone());mesh.position.y=height;world.add(mesh);}
+ material.dispose();
+}
+function drawRoads3D(){
+ for(let i=0;i<roads.length;i++){const r=roads[i],y=-ROAD_DROP+.001;polygonMesh(minusPoly(roadFootprints[i],raisedUnion),y,mat(r.tipo==='asfalto'?0x4b4e52:0xa6774b));
+ const marks=[];roadMarks(r,(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy);if(L<1e-8)return;const x=-dy/L*.06,z=dx/L*.06;marks.push([[[a.x+x,a.y+z],[b.x+x,b.y+z],[b.x-x,b.y-z],[a.x-x,a.y-z],[a.x+x,a.y+z]]]);});if(marks.length)polygonMesh(minusPoly(unionPolys(marks),raisedUnion),y+.004,mat(r.cor_faixa==='branca'?0xffffff:0xebcd46));}
+}
 
 function readMedians(data){return (Array.isArray(data.canteiros)?data.canteiros:[]).map(c=>({a:{x:Number(c.x1),y:Number(c.y1)},b:{x:Number(c.x2),y:Number(c.y2)},w:Number(c.largura),h:Number(c.altura??.15),material:String(c.material||'grama')})).filter(c=>valid(c.a)&&valid(c.b)&&Number.isFinite(c.w)&&c.w>0&&Number.isFinite(c.h)&&c.h>0&&c.h<=1&&Math.hypot(c.b.x-c.a.x,c.b.y-c.a.y)>.05);}
 function medianOutline(c){const a=Math.atan2(c.b.y-c.a.y,c.b.x-c.a.x),r=c.w/2,p=[];for(const [center,start] of [[c.a,a+Math.PI/2],[c.b,a-Math.PI/2]])for(let i=0;i<=24;i++){const t=start+Math.PI*i/24;p.push({x:center.x+r*Math.cos(t),y:center.y+r*Math.sin(t)});}return p;}
@@ -257,7 +285,7 @@ function subtractRectangle(rect,cut){
  if(right<=x||bottom<=y)return [rect];
  return [{x:rect.x,y:rect.y,w:rect.w,h:y-rect.y},{x:rect.x,y:bottom,w:rect.w,h:rect.y+rect.h-bottom},{x:rect.x,y,w:x-rect.x,h:bottom-y},{x:right,y,w:rect.x+rect.w-right,h:bottom-y}].filter(r=>r.w>1e-6&&r.h>1e-6);
 }
-function floorElevation(x,y){const median=medianAt(x,y);if(median)return -ROAD_DROP+median.h;for(let i=surfaceAreas.length-1;i>=0;i--){const r=surfaceAreas[i];if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h)return /asfalto|rua|paviment/.test(r.material)?-ROAD_DROP:0;}return 0;}
+function floorElevation(x,y){const median=medianAt(x,y);if(median)return -ROAD_DROP+median.h;const contains=r=>x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h;if(surfaceAreas.some(r=>!isRoadSurface(r)&&contains(r)))return 0;if(surfaceAreas.some(r=>isRoadSurface(r)&&contains(r))||roads.some(r=>r.p.some((b,i)=>i>0&&pointSegment({x,y},r.p[i-1],b)<=r.largura/2)))return -ROAD_DROP;return 0;}
 function drawPavements(data,rect){
  const areas=pavementAreas(data);surfaceAreas=areas;roadAreas=areas.filter(p=>/asfalto|rua|paviment/.test(p.material));
  const plane=(r,height,color,texture=floorTexture)=>{
@@ -265,35 +293,15 @@ function drawPavements(data,rect){
   for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*r.w/2,uv.getY(i)*r.h/2);
   const mesh=new T.Mesh(geo,new T.MeshLambertMaterial({map:texture,color}));mesh.rotation.x=-Math.PI/2;mesh.position.set(r.x+r.w/2,height,r.y+r.h/2);mesh.userData.piso=true;world.add(mesh);return mesh;
  };
- // O piso superior é recortado: a rua rebaixada não fica escondida por um plano em y=0.
- let pieces=[rect];for(const road of roadAreas)pieces=pieces.flatMap(r=>subtractRectangle(r,road));
+ prepareRoadGeometry(areas);
  plane(rect,-ROAD_DROP-.005,0x575b5d);
- for(const p of pieces)plane(p,0,0xffffff);
- for(const p of areas)plane(p,/asfalto|rua|paviment/.test(p.material)?-ROAD_DROP:.003,
-  /asfalto|rua|paviment/.test(p.material)?0x30363b:/grama/.test(p.material)?0x69914f:/terra/.test(p.material)?0xa2835c:0xd2d1c7);
- // Faces verticais de 15 cm somente nas bordas expostas da união das ruas.
- const inside=(x,y)=>roadAreas.some(r=>x>r.x&&x<r.x+r.w&&y>r.y&&y<r.y+r.h);
- for(const r of roadAreas){
-  const edges=[{a:{x:r.x,y:r.y},b:{x:r.x+r.w,y:r.y}},{a:{x:r.x+r.w,y:r.y},b:{x:r.x+r.w,y:r.y+r.h}},{a:{x:r.x+r.w,y:r.y+r.h},b:{x:r.x,y:r.y+r.h}},{a:{x:r.x,y:r.y+r.h},b:{x:r.x,y:r.y}}];
-  for(const edge of edges){
-   const dx=edge.b.x-edge.a.x,dy=edge.b.y-edge.a.y,length=Math.hypot(dx,dy),ux=dx/length,uy=dy/length;
-   let intervals=[{lo:0,hi:length}];
-   for(const other of roadAreas){if(other===r)continue;
-    const horizontal=Math.abs(uy)<.5,constant=horizontal?edge.a.y:edge.a.x;
-    const min=horizontal?other.y:other.x,max=min+(horizontal?other.h:other.w);
-    if(constant<min-1e-6||constant>max+1e-6)continue;
-    const start=horizontal?other.x:other.y,end=start+(horizontal?other.w:other.h);
-    const base=horizontal?edge.a.x:edge.a.y,dir=horizontal?ux:uy;
-    const lo=Math.min((start-base)/dir,(end-base)/dir),hi=Math.max((start-base)/dir,(end-base)/dir);
-    // Remove a parte em contato com outra rua, inclusive bordas coincidentes.
-    intervals=intervals.flatMap(v=>hi<=v.lo||lo>=v.hi?[v]:[{lo:v.lo,hi:Math.min(v.hi,lo)},{lo:Math.max(v.lo,hi),hi:v.hi}].filter(q=>q.hi-q.lo>1e-6));
-   }
-   for(const v of intervals){const t=(v.lo+v.hi)/2,cx=edge.a.x+ux*t,cy=edge.a.y+uy*t;
-    if(inside(cx+uy*.01,cy-ux*.01))continue;
-    const mesh=new T.Mesh(new T.BoxGeometry(v.hi-v.lo,ROAD_DROP,.015),mat(0xa4a5a1));mesh.position.set(cx,-ROAD_DROP/2,cy);mesh.rotation.y=-Math.atan2(uy,ux);world.add(mesh);
-   }
-  }
- }
+ const terrain=minusPoly([rectPolygon(rect)],roadUnion);
+ polygonMesh(terrain,0, new T.MeshLambertMaterial({color:0xd2d1c7}));
+ for(const p of areas){if(isRoadSurface(p))polygonMesh(minusPoly([rectPolygon(p)],raisedUnion),-ROAD_DROP,mat(0x30363b));else plane(p,.003,/grama/.test(p.material)?0x69914f:/terra/.test(p.material)?0xa2835c:0xd2d1c7);}
+ // Curbs along the exposed boundary of the combined road surface.
+ const exposed=minusPoly(roadUnion,raisedUnion);
+ for(const poly of exposed)for(const ring of poly)for(let i=1;i<ring.length;i++){const a=ring[i-1],b=ring[i],dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy);if(L<1e-6)continue;const mesh=new T.Mesh(new T.BoxGeometry(L,ROAD_DROP,.015),mat(0xa4a5a1));mesh.position.set((a[0]+b[0])/2,-ROAD_DROP/2,(a[1]+b[1])/2);mesh.rotation.y=-Math.atan2(dy,dx);world.add(mesh);}
+
 }
 
 
@@ -386,6 +394,8 @@ function qDraw(now){
  const line=(a,b,color,width)=>{g.strokeStyle=color;g.lineWidth=width;g.beginPath();g.moveTo(X(a.x),Y(a.y));g.lineTo(X(b.x),Y(b.y));g.stroke();};
  for(const p of pavementAreas(qData)){g.fillStyle=/asfalto|rua|paviment/.test(p.material)?'#aab1b8':/grama/.test(p.material)?'#cce2b9':/terra/.test(p.material)?'#ddc8ad':'#e4e1da';g.fillRect(X(p.x),Y(p.y),p.w*scale,p.h*scale);if(!/asfalto|rua|paviment|grama|terra/.test(p.material)){g.strokeStyle='#b6b8b1';g.lineWidth=Math.max(.5,Math.min(2,scale*.15));g.strokeRect(X(p.x),Y(p.y),p.w*scale,p.h*scale);}}
  drawRoads2D(g,X,Y,scale);
+ g.save();g.strokeStyle='#929893';g.lineWidth=Math.max(.6,Math.min(3,ROAD_DROP*scale));for(const poly of exposedRoadUnion)for(const ring of poly){g.beginPath();ring.forEach((p,i)=>i?g.lineTo(X(p[0]),Y(p[1])):g.moveTo(X(p[0]),Y(p[1])));g.closePath();g.stroke();}g.restore();
+ for(const p of surfaceAreas.filter(p=>!isRoadSurface(p))){g.fillStyle=/grama/.test(p.material)?'#cce2b9':/terra/.test(p.material)?'#ddc8ad':'#e4e1da';g.fillRect(X(p.x),Y(p.y),p.w*scale,p.h*scale);if(isSidewalk(p)){g.strokeStyle='#9a9d97';g.lineWidth=Math.max(.6,Math.min(3,ROAD_DROP*scale));g.strokeRect(X(p.x),Y(p.y),p.w*scale,p.h*scale);}}
  for(const c of normalizeCoverages(qData.coberturas||[])){g.fillStyle='#e5ebf1';g.beginPath();c.pontos.forEach((p,i)=>i?g.lineTo(X(p.x),Y(p.y)):g.moveTo(X(p.x),Y(p.y)));g.closePath();g.fill();}
  g.lineCap='round';g.lineJoin='round';
  for(const c of medians){const p=medianOutline(c);g.beginPath();p.forEach((v,i)=>i?g.lineTo(X(v.x),Y(v.y)):g.moveTo(X(v.x),Y(v.y)));g.closePath();g.save();g.shadowColor='rgba(35,45,40,.25)';g.shadowOffsetY=Math.min(5,c.h*scale);g.fillStyle=medianColor(c);g.fill();g.restore();g.strokeStyle='#858984';g.lineWidth=Math.max(1,Math.min(4,c.h*scale));g.stroke();}
@@ -417,7 +427,7 @@ let returnTimer=0; const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f
 function results(){const terms=normalize($('search').value).trim().split(/\s+/);const list=$('results');list.replaceChildren();for(const [i,d] of (map?.dest||[]).entries()){if(!terms.every(t=>normalize(d.nome).includes(t)))continue;const b=document.createElement('button');b.textContent=d.nome;b.onclick=()=>{ qSelect(i); };list.append(b);}if(!list.children.length)list.textContent=map?'Nenhum destino encontrado.':'Carregando mapa…';}
 function consult(message=''){clearTimeout(returnTimer);route=[];$('navigation').hidden=true;$('consult').hidden=false;$('search').value='';$('feedback').textContent=message;results();}
 $('search').addEventListener('input',results);for(const row of ['QWERTYUIOP','ASDFGHJKL','ZXCVBNM','1234567890']){const line=document.createElement('div');line.className='keys';for(const c of row){const b=document.createElement('button');b.textContent=c;b.onclick=()=>{$('search').value+=c;results()};line.append(b)}$('keyboard').append(line)}for(const [id,action] of [['space',s=>s+' '],['backspace',s=>s.slice(0,-1)],['clear',()=> '']])$(id).onclick=()=>{$('search').value=action($('search').value);results()};
-function load(data){qData=data;roads=readRoads(data);fences=readFences(data);medians=readMedians(data);if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const rawStart=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),rawDest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));if(data.rotas!==undefined&&!Array.isArray(data.rotas))throw Error('A camada rotas deve ser uma lista.');
+function load(data){qData=data;roads=readRoads(data);fences=readFences(data);medians=[...readMedians(data),...readSidewalks(data)];if(!data.inicio||!Array.isArray(data.paredes)||!Array.isArray(data.destinos))throw Error('JSON requer inicio, paredes e destinos.');const rawStart=point(data.inicio),walls=data.paredes.map(point),objects=(data.objetos||[]).map(p=>({...point(p),nome:String(p.nome||p.tipo||'')})),rawDest=data.destinos.map(p=>({...point(p),nome:String(p.nome||'Destino')}));if(data.rotas!==undefined&&!Array.isArray(data.rotas))throw Error('A camada rotas deve ser uma lista.');
  const coverages=normalizeCoverages(data.coberturas||[]);
  const routePoints=(data.rotas||[]).flatMap(r=>Array.isArray(r?.pontos)?r.pontos.map(p=>point(p||{})):[]);
  const all=[...roads.flatMap(r=>r.p.flatMap(p=>[{x:p.x-r.largura/2,y:p.y-r.largura/2},{x:p.x+r.largura/2,y:p.y+r.largura/2}])),...medians.flatMap(medianOutline),...fences.flatMap(f=>[f.a,f.b]),rawStart,...walls,...objects,...rawDest,...routePoints,...coverages.flatMap(c=>c.pontos),...(data.portas||[]).flatMap(d=>[{x:Number(d.x1),y:Number(d.y1)},{x:Number(d.x2),y:Number(d.y2)}]),...pavementAreas(data).flatMap(p=>[{x:p.x,y:p.y},{x:p.x+p.w,y:p.y+p.h}])];if(!all.every(valid))throw Error('Coordenadas x e y devem ser números finitos.');if(!walls.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)))throw Error('Coordenadas das paredes devem ser inteiras em x e y.');/* O editor salva posições contínuas; A* trabalha com células de 1 metro. */const start=cell(rawStart),dest=rawDest.map(p=>({...p,...cell(p)}));let minX=start.x,maxX=start.x,minY=start.y,maxY=start.y;for(const p of all){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)}bounds={minX:minX-2,maxX:maxX+2,minY:minY-2,maxY:maxY+2};map={start,dest,rawStart,rawDest,manualRoutes:data.rotas||[]};architecture=buildArchitecture(walls,data.portas||[]);blocked=new Set(objects.map(p=>key(Math.floor(p.x),Math.floor(p.y))));objectBlocked=new Set(blocked);for(const k of architecture.index.keys()){const [x,y]=k.split(',').map(Number);if(architectureHit(architecture,x+.5,y+.5))blocked.add(k);}scene.remove(world);world.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});world=new T.Group();world.scale.setScalar(WORLD_SCALE);scene.add(world);drawPavements(data,{x:minX-2,y:minY-2,w:maxX-minX+5,h:maxY-minY+5});
