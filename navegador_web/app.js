@@ -1,16 +1,16 @@
 import * as T from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import polygonClipping from 'https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/+esm';
 // Escala somente da apresentação; JSON, grade de rotas e colisões mantêm suas coordenadas.
-const WORLD_SCALE=.5;
+const WORLD_SCALE=.35;
 const $=id=>document.getElementById(id), view=$('view'), status=$('status');
 let renderer; try{renderer=new T.WebGLRenderer({antialias:true,powerPreference:'low-power'});}catch(e){status.textContent='WebGL 2 indisponível neste dispositivo.';throw e;}
-view.append(renderer.domElement);const scene=new T.Scene();scene.background=new T.Color(0xaec9dc);scene.fog=new T.Fog(0xaec9dc,45*WORLD_SCALE,110*WORLD_SCALE);// Ajustes globais da câmera (distâncias em unidades do mapa, ângulos em graus).
+view.append(renderer.domElement);const scene=new T.Scene();scene.background=new T.Color(0xaec9dc);scene.fog=null;// Ajustes globais da câmera (distâncias em unidades do mapa, ângulos em graus).
 const CEILING_HEIGHT=2.8;
 const CAMERA_HEIGHT=1.65;
 const CAMERA_DISTANCE=1.5;
 const CAMERA_PITCH=2;
-const CAMERA_FOV=75;
-const camera=new T.PerspectiveCamera(CAMERA_FOV,1,.1*WORLD_SCALE,120*WORLD_SCALE);let world=new T.Group();world.scale.setScalar(WORLD_SCALE);scene.add(world);scene.add(new T.HemisphereLight(0xffffff,0x777777,2));const light=new T.DirectionalLight(0xffffff,1.3);light.position.set(10,20,5).multiplyScalar(WORLD_SCALE);scene.add(light);
+const CAMERA_FOV=65;
+const camera=new T.PerspectiveCamera(CAMERA_FOV,1,.1*WORLD_SCALE,2000*WORLD_SCALE);let world=new T.Group();world.scale.setScalar(WORLD_SCALE);scene.add(world);scene.add(new T.HemisphereLight(0xffffff,0x777777,2));const light=new T.DirectionalLight(0xffffff,1.3);light.position.set(10,20,5).multiplyScalar(WORLD_SCALE);scene.add(light);
 let map,blocked,objectBlocked,bounds,route=[],pos=new T.Vector3(),angle=0,ratio=1,frames=0,elapsed=0,fps=0,notice='',last=performance.now();const key=(x,y)=>x+','+y;const point=p=>({x:Number(p.x),y:Number(p.y)});const valid=p=>Number.isFinite(p.x)&&Number.isFinite(p.y);const cell=p=>({x:Math.floor(p.x),y:Math.floor(p.y)});const mat=color=>new T.MeshLambertMaterial({color});
 
 function pattern(brick){
