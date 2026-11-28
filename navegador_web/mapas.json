@@ -1,0 +1,9 @@
+{
+  "mapas": [
+    {
+      "id": "atual",
+      "nome": "Mapa atual",
+      "arquivo": "mapa.json"
+    }
+  ]
+}
