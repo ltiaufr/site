@@ -658,4 +658,106 @@ cameraBack=back<cameraBack?back:cameraBack+(back-cameraBack)*(1-Math.exp(-dt*5))
 camera.position.set(pos.x-fx*cameraBack,CAMERA_HEIGHT+cameraGround,pos.z-fz*cameraBack).multiplyScalar(WORLD_SCALE);
 const pitch=CAMERA_PITCH*Math.PI/180;
 camera.lookAt(camera.position.x+fx*Math.cos(pitch),camera.position.y-Math.sin(pitch),camera.position.z+fz*Math.cos(pitch));if(!$('navigation').hidden)renderer.render(scene,camera);frames++;elapsed+=raw;if(elapsed>=2){fps=Math.round(frames/elapsed);frames=0;elapsed=0;if($('quality').value==='auto'&&fps<28&&ratio>.55){ratio=Math.max(.55,ratio-.15);resize()}status.textContent=notice;}}
-try{const r=await fetch('./mapa.json',{cache:'no-store'});if(!r.ok)throw Error('Mapa de exemplo indisponível');load(await r.json())}catch(e){notice=e.message;$('feedback').textContent=notice}requestAnimationFrame(tick);
+
+const CONFIG_KEY='navegador_web.config.v1';
+const baseURL=new URL('./',location.href);
+async function jsonAt(url){
+ const r=await fetch(url,{cache:'no-store'});
+ if(!r.ok)throw Error('Arquivo indisponível: '+url.pathname+' (HTTP '+r.status+')');
+ return r.json();
+}
+function localURL(file,base=baseURL){
+ if(typeof file!=='string'||!file.trim())throw Error('Nome de arquivo ausente.');
+ const u=new URL(file,base);
+ if(u.origin!==baseURL.origin||!u.pathname.startsWith(baseURL.pathname))throw Error('Arquivo fora da pasta de navegação.');
+ return u;
+}
+let catalog=[],currentConfig=null,configBusy=false,selectionToken=0,selectedData=null;
+const configDialog=document.createElement('dialog');
+configDialog.style.cssText='width:min(94vw,520px);max-height:90dvh;overflow:auto;border:0;border-radius:16px;padding:24px;background:#e9eef5;color:#24354c;box-shadow:0 16px 60px #0006';
+configDialog.innerHTML='<h2 style="margin-top:0">Configuração do quiosque</h2><label for="cfgMap">Mapa</label><select id="cfgMap" style="display:block;width:100%;padding:12px;margin:8px 0 18px"></select><label for="cfgOrigin">Ponto de origem</label><select id="cfgOrigin" style="display:block;width:100%;padding:12px;margin:8px 0 18px"></select><p id="cfgError" role="status" style="color:#a84c43"></p><div style="display:flex;gap:10px;flex-wrap:wrap"><button id="cfgSave">Salvar e iniciar</button><button id="cfgCancel">Cancelar</button></div>';
+document.body.append(configDialog);
+const configButton=document.createElement('button');
+configButton.textContent='⚙';configButton.title='Configurar mapa e origem';configButton.setAttribute('aria-label','Configurar quiosque');configButton.style.cssText='position:absolute;right:10px;top:10px;padding:6px 12px;z-index:2';
+$('consult').querySelector('header').style.position='relative';
+$('consult').querySelector('header').append(configButton);
+const cfgMap=$('cfgMap'),cfgOrigin=$('cfgOrigin'),cfgError=$('cfgError'),cfgSave=$('cfgSave');
+function originsOf(data){
+ if(Array.isArray(data.origens)&&data.origens.length)return data.origens;
+ if(data.inicio&&!data.rotas_separadas)return [{id:'legado',nome:'Ponto inicial',...data.inicio}];
+ throw Error('Mapa sem pontos de origem.');
+}
+async function readMap(id){
+ const entry=catalog.find(m=>m.id===id);
+ if(!entry)throw Error('Mapa não cadastrado: '+id);
+ const url=localURL(entry.arquivo),data=await jsonAt(url);
+ return {entry,url,data,origins:originsOf(data)};
+}
+async function activate(selection,originId,persist){
+ const {entry,url,data,origins}=selection;
+ const o=origins.find(x=>x.id===originId);
+ if(!o||!valid(point(o)))throw Error('Origem inexistente ou inválida.');
+ let routes;
+ if(data.rotas_separadas||o.arquivo_rotas){
+  const f=await jsonAt(localURL(o.arquivo_rotas,url));
+  if(f.origem_id!==o.id||f.versao_mapa!==data.versao_mapa||!Array.isArray(f.rotas))throw Error('Arquivo de rotas incompatível com o mapa.');
+  if(f.rotas.some(r=>r.origem_id!==o.id))throw Error('Arquivo contém rotas de outra origem.');
+  routes=f.rotas;
+ }else{
+  routes=(data.rotas||[]).filter(r=>o.id==='legado'||r.origem_id===o.id);
+ }
+ load({...data,inicio:{x:Number(o.x),y:Number(o.y)},rotas:routes});
+ currentConfig={mapa:entry.id,origem:o.id};
+ if(persist){
+  try{localStorage.setItem(CONFIG_KEY,JSON.stringify(currentConfig));}catch(e){$('feedback').textContent='Configuração ativa, mas não foi possível gravá-la neste navegador.';}
+ }
+ configButton.title='Configurar: '+entry.nome+' / '+o.nome;
+}
+async function fillOrigins(preferred){
+ const token=++selectionToken;
+ selectedData=null;cfgSave.disabled=true;cfgOrigin.disabled=true;cfgOrigin.replaceChildren();cfgError.textContent='Carregando origens…';
+ try{
+  const sel=await readMap(cfgMap.value);
+  if(token!==selectionToken)return;
+  selectedData=sel;
+  cfgOrigin.replaceChildren(...sel.origins.map(o=>new Option(o.nome||o.id,o.id)));
+  if(sel.origins.some(o=>o.id===preferred))cfgOrigin.value=preferred;
+  cfgOrigin.disabled=false;cfgSave.disabled=false;cfgError.textContent='';
+ }catch(e){if(token===selectionToken)cfgError.textContent=e.message;}
+}
+function openConfig(preferred=currentConfig){
+ cfgMap.replaceChildren(...catalog.map(m=>new Option(m.nome,m.id)));
+ if(preferred&&catalog.some(m=>m.id===preferred.mapa))cfgMap.value=preferred.mapa;
+ $('cfgCancel').hidden=!currentConfig;
+ if(!configDialog.open)configDialog.showModal();
+ fillOrigins(preferred?.origem);
+}
+cfgMap.onchange=()=>fillOrigins();
+$('cfgCancel').onclick=()=>{if(!configBusy){++selectionToken;configDialog.close();}};
+configDialog.addEventListener('cancel',e=>{if(!currentConfig||configBusy)e.preventDefault();else ++selectionToken;});
+cfgSave.onclick=async()=>{
+ if(configBusy||!selectedData)return;
+ configBusy=true;cfgSave.disabled=true;cfgMap.disabled=true;cfgOrigin.disabled=true;cfgError.textContent='Carregando mapa e rotas…';
+ try{
+  await activate(selectedData,cfgOrigin.value,true);
+  const u=new URL(location.href);u.searchParams.delete('mapa');u.searchParams.delete('origem');u.searchParams.delete('config');history.replaceState(null,'',u);
+  configDialog.close();
+ }catch(e){cfgError.textContent=e.message;}
+ finally{configBusy=false;cfgSave.disabled=false;cfgMap.disabled=false;cfgOrigin.disabled=false;}
+};
+configButton.onclick=()=>openConfig();
+async function initializeKiosk(){
+ try{
+  const c=await jsonAt(localURL('mapas.json'));
+  if(!Array.isArray(c.mapas)||!c.mapas.length)throw Error('Catálogo de mapas vazio.');
+  catalog=c.mapas;
+  let saved=null;try{saved=JSON.parse(localStorage.getItem(CONFIG_KEY)||'null');}catch(e){}
+  const params=new URLSearchParams(location.search);
+  const explicit=params.has('mapa')||params.has('origem');
+  const wanted=explicit?{mapa:params.get('mapa'),origem:params.get('origem')}:saved;
+  if(params.get('config')==='1'||!wanted?.mapa||!wanted?.origem){openConfig(wanted);return;}
+  try{await activate(await readMap(wanted.mapa),wanted.origem,false);}
+  catch(e){openConfig(wanted);$('feedback').textContent=e.message;}
+ }catch(e){notice=e.message;$('feedback').textContent=notice;}
+}
+await initializeKiosk();requestAnimationFrame(tick);
