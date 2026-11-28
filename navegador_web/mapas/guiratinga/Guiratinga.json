@@ -1,0 +1,3841 @@
+{
+  "versao" : 1,
+  "largura" : 1206,
+  "altura" : 622,
+  "unidade" : "metro",
+  "paredes" : [
+    {
+      "x" : 137,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 138,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 139,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 140,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 141,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 142,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 143,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 144,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 145,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 146,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 147,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 148,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 149,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 150,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 151,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 152,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 153,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 154,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 155,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 156,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 157,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 158,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 159,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 160,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 161,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 162,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 163,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 164,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 165,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 166,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 260,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 259,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 258,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 257,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 256,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 255,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 254,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 253,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 252,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 251,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 250,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 249,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 248,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 247,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 246,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 245,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 244,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 243,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 242,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 241,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 240,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 239,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 238,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 237,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 236,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 235,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 234,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 233,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 232,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 231,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 230,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 229,
+      "material" : "concreto"
+    },
+    {
+      "x" : 167,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 166,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 165,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 164,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 163,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 162,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 161,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 160,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 159,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 158,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 157,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 156,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 155,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 154,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 153,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 152,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 151,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 150,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 149,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 148,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 147,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 146,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 145,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 144,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 143,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 142,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 141,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 140,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 139,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 138,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 137,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 228,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 229,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 230,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 231,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 232,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 233,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 234,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 235,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 236,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 237,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 238,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 239,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 240,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 241,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 242,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 243,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 244,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 245,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 246,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 247,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 248,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 249,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 250,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 251,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 252,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 253,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 254,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 255,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 256,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 257,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 258,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 259,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 260,
+      "material" : "concreto"
+    },
+    {
+      "x" : 136,
+      "y" : 261,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 907,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 908,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 909,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 910,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 911,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 912,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 913,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 914,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 915,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 916,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 917,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 918,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 919,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 920,
+      "y" : 198,
+      "material" : "concreto"
+    },
+    {
+      "x" : 920,
+      "y" : 197,
+      "material" : "concreto"
+    },
+    {
+      "x" : 920,
+      "y" : 196,
+      "material" : "concreto"
+    },
+    {
+      "x" : 920,
+      "y" : 195,
+      "material" : "concreto"
+    },
+    {
+      "x" : 920,
+      "y" : 194,
+      "material" : "concreto"
+    },
+    {
+      "x" : 920,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 921,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 922,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 923,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 924,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 925,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 926,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 927,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 928,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 929,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 930,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 931,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 932,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 192,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 191,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 190,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 189,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 188,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 187,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 186,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 185,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 184,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 183,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 182,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 181,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 180,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 179,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 178,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 177,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 176,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 175,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 174,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 173,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 172,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 171,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 170,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 169,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 168,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 167,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 166,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 165,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 164,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 163,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 162,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 161,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 160,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 159,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 158,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 157,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 156,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 155,
+      "material" : "concreto"
+    },
+    {
+      "x" : 933,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 932,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 931,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 930,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 929,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 928,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 927,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 926,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 925,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 924,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 923,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 922,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 921,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 920,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 919,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 918,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 917,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 916,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 915,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 914,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 913,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 912,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 911,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 910,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 909,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 908,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 907,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 154,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 155,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 156,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 157,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 158,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 159,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 160,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 161,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 162,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 163,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 164,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 165,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 166,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 167,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 168,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 169,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 170,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 171,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 172,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 173,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 174,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 175,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 176,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 177,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 178,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 179,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 180,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 181,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 182,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 183,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 184,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 185,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 186,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 187,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 188,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 189,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 190,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 191,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 192,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 193,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 194,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 195,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 196,
+      "material" : "concreto"
+    },
+    {
+      "x" : 906,
+      "y" : 197,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1148,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1150,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1151,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1152,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1153,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1154,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1155,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1156,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1157,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1158,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1159,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1160,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1161,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1162,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1163,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1164,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1165,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1166,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1167,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1168,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1169,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1170,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1171,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1172,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1173,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1174,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1175,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 491,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 490,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 489,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 488,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 487,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 486,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 485,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 484,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 483,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 482,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 481,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 480,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 479,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 478,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 477,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 476,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 475,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 474,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 473,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 472,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 471,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1176,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1175,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1174,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1173,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1172,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1171,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1170,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1169,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1168,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1167,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1166,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1165,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1164,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1163,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1162,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1161,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1160,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1159,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1158,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1157,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1156,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1155,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1154,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1153,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1152,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1151,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1150,
+      "y" : 470,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1150,
+      "y" : 471,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1150,
+      "y" : 472,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1150,
+      "y" : 473,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1150,
+      "y" : 474,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 475,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 476,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 477,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 478,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 479,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 480,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 481,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 482,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 483,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1149,
+      "y" : 484,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1148,
+      "y" : 485,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1148,
+      "y" : 486,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1148,
+      "y" : 487,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1148,
+      "y" : 488,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1148,
+      "y" : 489,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1148,
+      "y" : 490,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 965,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 966,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 967,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 968,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 969,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 970,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 971,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 972,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 973,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 974,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 975,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 976,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 977,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 978,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 979,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 980,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 981,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 982,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 983,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 984,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 985,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 986,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 987,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 988,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 989,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 990,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 991,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 992,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 993,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 994,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 995,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 996,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 997,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 998,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 999,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1000,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1001,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1002,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1003,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1004,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1005,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1006,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1007,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1008,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1009,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1010,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1011,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1012,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1013,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1014,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1015,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 369,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 368,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 367,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 366,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 365,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 364,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 363,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 362,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 361,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 360,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 359,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 358,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 357,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 356,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 355,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 354,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 353,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 352,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 351,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 350,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 349,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 348,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 347,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 346,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 345,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 344,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 343,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 342,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 341,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 340,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 339,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 338,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 337,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 336,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 335,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 334,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 333,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 332,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 331,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 330,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 329,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 328,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 327,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 326,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 325,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 324,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 323,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 322,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 321,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 320,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 319,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 318,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 317,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 316,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 315,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 314,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 313,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 312,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 311,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 310,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 309,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 308,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 307,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 306,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 305,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 304,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 303,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 302,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 301,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 300,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 299,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 298,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 297,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 296,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 295,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 294,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 293,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 292,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 291,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 290,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 289,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 288,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 287,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 286,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 285,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 284,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 283,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 282,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 281,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 280,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 279,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 278,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 277,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 276,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 275,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 274,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 273,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 272,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 271,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 270,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 269,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 268,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 267,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 266,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 265,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 264,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1017,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1016,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1015,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1014,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1013,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1012,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1011,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1010,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1009,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1008,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1007,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1006,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1005,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1004,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1003,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1002,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1001,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 1000,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 999,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 998,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 997,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 996,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 995,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 994,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 993,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 992,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 991,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 990,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 989,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 988,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 987,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 986,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 985,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 984,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 983,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 982,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 981,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 980,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 979,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 978,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 977,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 976,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 975,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 974,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 973,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 972,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 971,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 970,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 969,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 968,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 967,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 966,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 965,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 263,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 264,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 265,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 266,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 267,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 268,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 269,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 270,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 271,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 272,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 273,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 274,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 275,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 276,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 277,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 278,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 279,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 280,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 281,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 282,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 283,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 284,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 285,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 286,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 287,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 288,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 289,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 290,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 291,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 292,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 293,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 294,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 295,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 296,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 297,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 298,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 299,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 300,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 301,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 302,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 303,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 304,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 305,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 306,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 307,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 308,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 309,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 310,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 311,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 312,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 313,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 314,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 315,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 316,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 317,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 318,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 319,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 320,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 321,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 322,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 323,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 324,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 325,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 326,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 327,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 328,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 329,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 330,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 331,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 332,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 333,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 334,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 335,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 336,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 337,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 338,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 339,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 340,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 341,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 342,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 343,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 344,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 345,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 346,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 347,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 348,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 349,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 350,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 351,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 352,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 353,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 354,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 355,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 356,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 357,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 358,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 359,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 360,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 361,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 362,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 363,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 364,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 365,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 366,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 367,
+      "material" : "concreto"
+    },
+    {
+      "x" : 964,
+      "y" : 368,
+      "material" : "concreto"
+    }
+  ],
+  "pisos" : [
+  ],
+  "vias" : [
+    {
+      "tipo" : "asfalto",
+      "largura" : 8.0000000000000000E+000,
+      "suavizar" : true,
+      "faixa_central" : "tracejada",
+      "cor_faixa" : "amarela",
+      "pontos" : [
+        {
+          "x" : 4.4261125319693076E+002,
+          "y" : 1.1745396419437347E+002
+        },
+        {
+          "x" : 6.9707416879795369E+002,
+          "y" : 1.2516496163682871E+002
+        },
+        {
+          "x" : 9.4999488491048555E+002,
+          "y" : 1.2670716112531974E+002
+        }
+      ]
+    },
+    {
+      "tipo" : "asfalto",
+      "largura" : 8.0000000000000000E+000,
+      "suavizar" : true,
+      "faixa_central" : "tracejada",
+      "cor_faixa" : "amarela",
+      "pontos" : [
+        {
+          "x" : 1.1921202046035801E+003,
+          "y" : 1.2824936061381081E+002
+        },
+        {
+          "x" : 1.1936624040920710E+003,
+          "y" : 5.9090920716112521E+002
+        }
+      ]
+    },
+    {
+      "tipo" : "asfalto",
+      "largura" : 8.0000000000000000E+000,
+      "suavizar" : true,
+      "faixa_central" : "tracejada",
+      "cor_faixa" : "amarela",
+      "pontos" : [
+        {
+          "x" : 9.5153708439897662E+002,
+          "y" : 1.2516496163682871E+002
+        },
+        {
+          "x" : 1.1921202046035801E+003,
+          "y" : 1.2516496163682871E+002
+        }
+      ]
+    },
+    {
+      "tipo" : "asfalto",
+      "largura" : 8.0000000000000000E+000,
+      "suavizar" : true,
+      "faixa_central" : "tracejada",
+      "cor_faixa" : "amarela",
+      "pontos" : [
+        {
+          "x" : 2.3132992327365720E+001,
+          "y" : 3.8888107416879791E+002
+        },
+        {
+          "x" : 1.1859514066496158E+003,
+          "y" : 3.8425447570332477E+002
+        }
+      ]
+    },
+    {
+      "tipo" : "asfalto",
+      "largura" : 8.0000000000000000E+000,
+      "suavizar" : true,
+      "faixa_central" : "tracejada",
+      "cor_faixa" : "amarela",
+      "pontos" : [
+        {
+          "x" : 9.2531969309462880E+000,
+          "y" : 1.2053836317135556E+002
+        },
+        {
+          "x" : 2.2978772378516615E+002,
+          "y" : 1.1899616368286451E+002
+        }
+      ]
+    },
+    {
+      "tipo" : "asfalto",
+      "largura" : 8.0000000000000000E+000,
+      "suavizar" : true,
+      "faixa_central" : "tracejada",
+      "cor_faixa" : "amarela",
+      "pontos" : [
+        {
+          "x" : 4.3798465473145762E+002,
+          "y" : 1.2584398976982202E+001
+        },
+        {
+          "x" : 4.4261125319693076E+002,
+          "y" : 6.0324680306905361E+002
+        }
+      ]
+    },
+    {
+      "tipo" : "asfalto",
+      "largura" : 8.0000000000000000E+000,
+      "suavizar" : true,
+      "faixa_central" : "tracejada",
+      "cor_faixa" : "amarela",
+      "pontos" : [
+        {
+          "x" : 7.0015856777493582E+002,
+          "y" : 1.1042199488491153E+001
+        },
+        {
+          "x" : 6.9244757033248050E+002,
+          "y" : 6.0478900255754468E+002
+        }
+      ]
+    },
+    {
+      "tipo" : "asfalto",
+      "largura" : 8.0000000000000000E+000,
+      "suavizar" : true,
+      "faixa_central" : "tracejada",
+      "cor_faixa" : "amarela",
+      "pontos" : [
+        {
+          "x" : 9.4382608695652129E+002,
+          "y" : 7.9578005115090571E+000
+        },
+        {
+          "x" : 9.4228388746803034E+002,
+          "y" : 6.0633120204603574E+002
+        }
+      ]
+    },
+    {
+      "tipo" : "asfalto",
+      "largura" : 8.0000000000000000E+000,
+      "suavizar" : true,
+      "faixa_central" : "tracejada",
+      "cor_faixa" : "amarela",
+      "pontos" : [
+        {
+          "x" : 1.8352173913043470E+002,
+          "y" : 7.9578005115090571E+000
+        },
+        {
+          "x" : 1.8814833759590786E+002,
+          "y" : 6.0324680306905361E+002
+        }
+      ]
+    },
+    {
+      "tipo" : "asfalto",
+      "largura" : 8.0000000000000000E+000,
+      "suavizar" : true,
+      "faixa_central" : "tracejada",
+      "cor_faixa" : "amarela",
+      "pontos" : [
+        {
+          "x" : 2.2978772378516615E+002,
+          "y" : 1.1899616368286451E+002
+        },
+        {
+          "x" : 4.4106905370843970E+002,
+          "y" : 1.1591176470588242E+002
+        }
+      ]
+    }
+  ],
+  "meios_fios" : [
+  ],
+  "alambrados" : [
+  ],
+  "canteiros" : [
+    {
+      "x1" : 1.8858968240304736E+002,
+      "y1" : 1.1836103559516785E+002,
+      "x2" : 4.3584127379833427E+002,
+      "y2" : 1.1573069951649458E+002,
+      "largura" : 1.0000000000000000E+000,
+      "altura" : 1.4999999999999999E-001,
+      "material" : "concreto"
+    },
+    {
+      "x1" : 4.4504745007369070E+002,
+      "y1" : 1.1748425690227677E+002,
+      "x2" : 6.9010709473674990E+002,
+      "y2" : 1.2362170775251438E+002,
+      "largura" : 1.0000000000000000E+000,
+      "altura" : 1.4999999999999999E-001,
+      "material" : "concreto"
+    },
+    {
+      "x1" : 7.0282038578367064E+002,
+      "y1" : 1.2449848644540548E+002,
+      "x2" : 9.3692029678559129E+002,
+      "y2" : 1.2669043317763320E+002,
+      "largura" : 1.0000000000000000E+000,
+      "altura" : 1.4999999999999999E-001,
+      "material" : "concreto"
+    },
+    {
+      "x1" : 9.4919519848606660E+002,
+      "y1" : 1.2581365448474210E+002,
+      "x2" : 9.9741802659507641E+002,
+      "y2" : 1.2537526513829656E+002,
+      "largura" : 1.0000000000000000E+000,
+      "altura" : 1.4999999999999999E-001,
+      "material" : "concreto"
+    },
+    {
+      "x1" : 1.1836512354029692E+001,
+      "y1" : 1.2011459298095002E+002,
+      "x2" : 1.7886285334978200E+002,
+      "y2" : 1.1967620363450449E+002,
+      "largura" : 1.0000000000000000E+000,
+      "altura" : 1.4999999999999999E-001,
+      "material" : "concreto"
+    }
+  ],
+  "portas" : [
+  ],
+  "objetos" : [
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 1.6623989578644018E+001,
+      "y" : 1.1997024798423196E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 3.4681081707171138E+001,
+      "y" : 1.2011355823922028E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 5.4744517405534609E+001,
+      "y" : 1.2011355823922028E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 7.3518160809003277E+001,
+      "y" : 1.2011355823922028E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 9.5731250332191408E+001,
+      "y" : 1.1997024798423196E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 1.1622461679551981E+002,
+      "y" : 1.1982693772924365E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 1.4130391141847414E+002,
+      "y" : 1.1997024798423196E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 1.6896279063121807E+002,
+      "y" : 1.1982693772924365E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 1.9361215448920748E+002,
+      "y" : 1.1839383517936055E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 2.1066607483281641E+002,
+      "y" : 1.1796390441439561E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 2.3001295925623833E+002,
+      "y" : 1.1839383517936055E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 2.5681197693905239E+002,
+      "y" : 1.1767728390441900E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 2.8160465105203014E+002,
+      "y" : 1.1767728390441900E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 3.0596739440004291E+002,
+      "y" : 1.1724735313945406E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 3.3004351723807906E+002,
+      "y" : 1.1681742237448914E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 3.5741577594084634E+002,
+      "y" : 1.1681742237448914E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 3.8134858852389419E+002,
+      "y" : 1.1638749160952420E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 4.0284512677214076E+002,
+      "y" : 1.1595756084455927E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 4.2147545992062112E+002,
+      "y" : 1.1595756084455927E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 4.5644316213776892E+002,
+      "y" : 1.1796390441439561E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 4.8940452078508031E+002,
+      "y" : 1.1868045568933717E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 5.2021622560756703E+002,
+      "y" : 1.1925369670929041E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 5.4687193303539277E+002,
+      "y" : 1.1982693772924365E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 5.7711039683792637E+002,
+      "y" : 1.2111673002413845E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 6.1236471956505068E+002,
+      "y" : 1.2183328129908000E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 6.4117008081770109E+002,
+      "y" : 1.2269314282900987E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 6.7183847538519956E+002,
+      "y" : 1.2340969410395142E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 7.1167872627194993E+002,
+      "y" : 1.2469948639884622E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 7.3460836707007957E+002,
+      "y" : 1.2498610690882283E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 7.5968766169303387E+002,
+      "y" : 1.2527272741879945E+002
+    },
+    {
+      "tipo" : "arvore_pequena",
+      "x" : 7.8849302294568429E+002,
+      "y" : 1.2555934792877608E+002
+    }
+  ],
+  "destinos" : [
+    {
+      "nome" : "Pizzaria Batidao",
+      "x" : 1.1781932880397223E+003,
+      "y" : 4.7732811140067793E+002
+    },
+    {
+      "nome" : "Vô e Vó",
+      "x" : 1.7078124105009030E+002,
+      "y" : 2.3456564954953649E+002
+    },
+    {
+      "nome" : "Escola Santa Teresinha",
+      "x" : 9.8409640490095762E+002,
+      "y" : 3.7175927142291016E+002
+    }
+  ],
+  "coberturas" : [
+  ],
+  "origens" : [
+    {
+      "id" : "origem_7356c187df014381a8e047d5562b19ae",
+      "nome" : "Mariana",
+      "x" : 9.1757850200296070E+002,
+      "y" : 1.4882217340469174E+002,
+      "arquivo_rotas" : "Guiratinga_origem_7356c187df014381a8e047d5562b19ae_BFC462B3-C8F2-49F1-BF2E-9FD53B7D448F.json"
+    }
+  ],
+  "rotas_separadas" : true,
+  "versao_mapa" : "BFC462B3-C8F2-49F1-BF2E-9FD53B7D448F"
+}
