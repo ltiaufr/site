@@ -585,6 +585,53 @@ function path(s,d){
  return [];
 }
 let cameraBack=CAMERA_DISTANCE,navSpeed=0,cameraGround=0;
+ // Humanoide procedural low-poly: geometria compartilhada, sem downloads ou texturas.
+ const avatar=new T.Group();scene.add(avatar);avatar.scale.setScalar(WORLD_SCALE);avatar.visible=false;
+ const skin=mat(0xc99470),hair=mat(0x392b24),shirt=mat(0xb94e48),pants=mat(0x285b70),shoe=mat(0x343638);
+ const ball=new T.SphereGeometry(1,8,5),tube=new T.CylinderGeometry(1,1,1,7,1),footGeo=new T.BoxGeometry(1,1,1);
+ function part(parent,geo,material,x,y,z,sx,sy,sz){const m=new T.Mesh(geo,material);m.position.set(x,y,z);m.scale.set(sx,sy,sz);parent.add(m);return m;}
+ const body=new T.Group();avatar.add(body);
+ const torso=part(body,ball,shirt,0,1.22,0,.24,.32,.15);
+ part(body,ball,pants,0,.94,0,.19,.15,.13);
+ part(body,tube,skin,0,1.51,0,.065,.14,.065);
+ part(body,ball,skin,0,1.68,0,.115,.15,.11);
+ part(body,ball,hair,0,1.74,-.025,.12,.105,.115);
+ part(body,ball,skin,0,1.66,.105,.027,.035,.025);
+ const longHair=part(body,ball,hair,0,1.55,-.09,.115,.19,.07);
+ const arms=[],legs=[];
+ for(const side of [-1,1]){
+  const arm=new T.Group();arm.position.set(side*.245,1.42,0);body.add(arm);
+  part(arm,ball,shirt,0,-.08,0,.085,.14,.085);
+  part(arm,tube,skin,0,-.19,0,.055,.15,.055);
+  const elbow=new T.Group();elbow.position.y=-.26;arm.add(elbow);
+  part(elbow,tube,skin,0,-.12,0,.047,.24,.047);
+  part(elbow,ball,skin,0,-.25,0,.055,.075,.045);
+  arms.push({arm,elbow});
+  const leg=new T.Group();leg.position.set(side*.105,.94,0);body.add(leg);
+  part(leg,tube,pants,0,-.22,0,.09,.44,.085);
+  const knee=new T.Group();knee.position.y=-.44;leg.add(knee);
+  part(knee,tube,pants,0,-.19,0,.07,.38,.07);
+  part(knee,footGeo,shoe,0,-.44,.055,.145,.10,.25);
+  legs.push({leg,knee});
+ }
+ let thirdPerson=true,walkPhase=0,avatarHeading=0;
+ const modeButton=document.createElement('button');modeButton.textContent='1ª pessoa';$('navBar').append(modeButton);
+ function toggleAvatar(){thirdPerson=!thirdPerson;modeButton.textContent=thirdPerson?'1ª pessoa':'3ª pessoa';}
+ modeButton.onclick=toggleAvatar;
+ document.addEventListener('keydown',e=>{if(e.code==='KeyP'&&!e.repeat&&!$('navigation').hidden)toggleAvatar();});
+ function selectAvatar(){const i=Math.floor(Math.random()*4);skin.color.setHex(i<2?0xd5a17c:0x805036);hair.color.setHex(i<2?0x493127:0x251d19);shirt.color.setHex([0xc65c52,0x7765a1,0x367e86,0xc28b46][i]);pants.color.setHex(i%2?0x37465d:0x285b70);longHair.visible=!!(i%2);torso.scale.x=i%2?.21:.24;walkPhase=0;avatarHeading=angle;}
+ function updateAvatar(dt,raw,back){
+  avatar.visible=thirdPerson&&!$('navigation').hidden&&back>1.05;
+  if(!avatar.visible)return;
+  avatar.position.set(pos.x*WORLD_SCALE,floorElevation(pos.x,pos.z)*WORLD_SCALE,pos.z*WORLD_SCALE);
+  const diff=Math.atan2(Math.sin(angle-avatarHeading),Math.cos(angle-avatarHeading));avatarHeading+=diff*(1-Math.exp(-dt*7));avatar.rotation.y=avatarHeading;
+  const moving=route.length>0&&navSpeed>.05;
+  if(moving)walkPhase+=Math.min(12,navSpeed*WORLD_SCALE*5)*Math.min(raw,.05);
+  const amplitude=moving?Math.min(.65,navSpeed*.18):0;
+  for(let i=0;i<2;i++){const wave=Math.sin(walkPhase+i*Math.PI);legs[i].leg.rotation.x=wave*amplitude;legs[i].knee.rotation.x=Math.max(0,-wave)*amplitude*.8;arms[i].arm.rotation.x=-wave*amplitude*.7;arms[i].elbow.rotation.x=-.12-Math.max(0,wave)*amplitude*.35;}
+  body.position.y=moving?.025*Math.abs(Math.sin(walkPhase)):0;
+ }
+
 $('go').onclick=()=>{
  if(!map)return;
  const index=Number($('dest').value),d=map.dest[index];if(!d)return;
@@ -596,7 +643,7 @@ $('go').onclick=()=>{
   pos.copy(route[0]);cameraGround=floorElevation(pos.x,pos.z);
   const next=route.find(p=>p.distanceTo(pos)>1e-6);
   angle=next?Math.atan2(next.x-pos.x,next.z-pos.z):0;
-  notice='Navegando para '+d.nome;
+  selectAvatar();notice='Navegando para '+d.nome;
   $('feedback').textContent='';$('status').textContent=notice;
   $('consult').hidden=true;$('navigation').hidden=false;resize();
  }catch(error){route=[];$('feedback').textContent=error.message;}
@@ -651,12 +698,12 @@ function tick(now){requestAnimationFrame(tick);const raw=(now-last)/1000;last=no
   const delta=look.sub(pos);
   if(delta.lengthSq()>1e-8){const desired=Math.atan2(delta.x,delta.z),diff=Math.atan2(Math.sin(desired-angle),Math.cos(desired-angle));angle+=diff*(1-Math.exp(-dt*4.5));}
  }else{notice='Destino alcançado';status.textContent=notice;navSpeed=0;}
-}animateDoors(dt);cameraGround+=(floorElevation(pos.x,pos.z)-cameraGround)*(1-Math.exp(-dt*8));const fx=Math.sin(angle),fz=Math.cos(angle);let back=CAMERA_DISTANCE;
+}animateDoors(dt);cameraGround+=(floorElevation(pos.x,pos.z)-cameraGround)*(1-Math.exp(-dt*8));const fx=Math.sin(angle),fz=Math.cos(angle);const desiredBack=thirdPerson?3.6:0;let back=desiredBack;
 // Evita recuar a câmera para dentro de paredes ou objetos.
-for(let d=.1;d<=CAMERA_DISTANCE+.1;d+=.1){if(blocked&&!safePoint(pos.x-fx*d,pos.z-fz*d,.22)){back=Math.max(0,d-.2);break;}}
+for(let d=.1;d<=desiredBack+.1;d+=.1){if(blocked&&!safePoint(pos.x-fx*d,pos.z-fz*d,.22)){back=Math.max(0,d-.2);break;}}
 cameraBack=back<cameraBack?back:cameraBack+(back-cameraBack)*(1-Math.exp(-dt*5));
-camera.position.set(pos.x-fx*cameraBack,CAMERA_HEIGHT+cameraGround,pos.z-fz*cameraBack).multiplyScalar(WORLD_SCALE);
-const pitch=CAMERA_PITCH*Math.PI/180;
+updateAvatar(dt,raw,cameraBack);camera.position.set(pos.x-fx*cameraBack,(thirdPerson?CAMERA_HEIGHT+.65:CAMERA_HEIGHT)+cameraGround,pos.z-fz*cameraBack).multiplyScalar(WORLD_SCALE);
+const pitch=(thirdPerson?12:CAMERA_PITCH)*Math.PI/180;
 camera.lookAt(camera.position.x+fx*Math.cos(pitch),camera.position.y-Math.sin(pitch),camera.position.z+fz*Math.cos(pitch));if(!$('navigation').hidden)renderer.render(scene,camera);frames++;elapsed+=raw;if(elapsed>=2){fps=Math.round(frames/elapsed);frames=0;elapsed=0;if($('quality').value==='auto'&&fps<28&&ratio>.55){ratio=Math.max(.55,ratio-.15);resize()}status.textContent=notice;}}
 
 const CONFIG_KEY='navegador_web.config.v1';
