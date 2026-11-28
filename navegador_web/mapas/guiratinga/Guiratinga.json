@@ -3815,14 +3815,14 @@
       "y" : 4.7732811140067793E+002
     },
     {
-      "nome" : "Vô e Vó",
-      "x" : 1.7078124105009030E+002,
-      "y" : 2.3456564954953649E+002
-    },
-    {
       "nome" : "Escola Santa Teresinha",
       "x" : 9.8409640490095762E+002,
       "y" : 3.7175927142291016E+002
+    },
+    {
+      "nome" : "Vovo",
+      "x" : 1.6861866959325849E+002,
+      "y" : 2.4044947519568356E+002
     }
   ],
   "coberturas" : [
@@ -3833,9 +3833,9 @@
       "nome" : "Mariana",
       "x" : 9.1757850200296070E+002,
       "y" : 1.4882217340469174E+002,
-      "arquivo_rotas" : "Guiratinga_origem_7356c187df014381a8e047d5562b19ae_BFC462B3-C8F2-49F1-BF2E-9FD53B7D448F.json"
+      "arquivo_rotas" : "Guiratinga_origem_7356c187df014381a8e047d5562b19ae_1372A698-280E-4FC2-B3A6-532814DE78B5.json"
     }
   ],
   "rotas_separadas" : true,
-  "versao_mapa" : "BFC462B3-C8F2-49F1-BF2E-9FD53B7D448F"
+  "versao_mapa" : "1372A698-280E-4FC2-B3A6-532814DE78B5"
 }
