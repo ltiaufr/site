@@ -9,6 +9,11 @@
                       "id":  "mapa",
                       "nome":  "mapa",
                       "arquivo":  "mapas/mapa/mapa.json"
+                  },
+                  {
+                      "id":  "ufr",
+                      "nome":  "ufr",
+                      "arquivo":  "mapas/ufr/ufr.json"
                   }
               ]
 }
