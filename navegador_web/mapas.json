@@ -1,9 +1,14 @@
 {
-  "mapas": [
-    {
-      "id": "atual",
-      "nome": "Mapa atual",
-      "arquivo": "mapa.json"
-    }
-  ]
+    "mapas":  [
+                  {
+                      "id":  "atual",
+                      "nome":  "Mapa atual",
+                      "arquivo":  "mapa.json"
+                  },
+                  {
+                      "id":  "mapa",
+                      "nome":  "mapa",
+                      "arquivo":  "mapas/mapa/mapa.json"
+                  }
+              ]
 }
